@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class Scanner : MonoBehaviour
 {
@@ -8,7 +9,8 @@ public class Scanner : MonoBehaviour
     public LayerMask targetLayer;   //스캔할 레이어
     public RaycastHit2D[] targets;  //스캔 결과 배열
     public Transform nearestTarget; //가장 가까운 목표
-    
+    public Vector3 randomTarget;
+    private float timer = 0f;
     void FixedUpdate()
     {
         // 원형의 캐스트를 쏘고 모든 결과를 반환하는 함수 
@@ -20,6 +22,8 @@ public class Scanner : MonoBehaviour
         //                   4. 캐스팅 길이,  => 캐스팅을 쏘는 것이 목적이 아니라 길이가 0 
         //                   5. 대상 레이어) 
         nearestTarget = GetNearest();
+        
+        randomTarget = GetRandom();
     }
 
     //가장 가까운 오브젝트의 Transform을 반환 시켜줄 함수
@@ -42,7 +46,14 @@ public class Scanner : MonoBehaviour
             }
 
         }
-
         return result;
     }
+    Vector3 GetRandom()
+    {
+        float height = Camera.main.orthographicSize * 2f;
+        float width = height * Camera.main.aspect;
+        Vector3 result = new Vector3(Random.Range(-width / 2f, width / 2f), Random.Range(-height / 2f, height / 2f));
+        return result;
+    }
+
 }

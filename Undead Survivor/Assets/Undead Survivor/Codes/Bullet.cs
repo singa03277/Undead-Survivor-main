@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float damage;   //µ¥¹ÌÁö
-    public int per;        //°üÅë
+    public float damage;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int per;        //ï¿½ï¿½ï¿½ï¿½
 
     Rigidbody2D rigid;
 
@@ -16,27 +16,27 @@ public class Bullet : MonoBehaviour
 
     public void Init(float damage, int per, Vector3 dir)
     {
-        this.damage = damage;   //BulletÀÇ µ¥¹ÌÁö¸¦ ¸Å°³º¯¼ö µ¥¹ÌÁö·Î ÃÊ±âÈ­
-        this.per = per;         //BulletÀÇ °üÅëÀ» ¸Å°³º¯¼ö °üÅëÀ¸·Î ÃÊ±âÈ­
+        this.damage = damage;   //Bulletï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+        this.per = per;         //Bulletï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 
-        if(per >= 0)
+        if (per >= 0)
         {
-            rigid.velocity = dir * 15f; //¼Óµµ´Â 15·Î »ç¿ë 
+            rigid.linearVelocity = dir * 15f; //ï¿½Óµï¿½ï¿½ï¿½ 15ï¿½ï¿½ ï¿½ï¿½ï¿½ 
         }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // ¸ó½ºÅÍ¿Í ¸¸³­°Ô ¾Æ´Ï°Å³ª, °üÅëÀÌ ¹«ÇÑÀÏ °æ¿ì return
+        // ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï°Å³ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ return
         if (!collision.CompareTag("Enemy") || per == -100)
             return;
 
         per--;
 
-        if(per < 0) //per ¼öÄ¡¸¸Å­ ¸ó½ºÅÍ¸¦ ¸¸³ª¼­ 0º¸´Ù ÀÛ¾ÆÁö¸é »èÁ¦
+        if (per < 0) //per ï¿½ï¿½Ä¡ï¿½ï¿½Å­ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         {
-            rigid.velocity = Vector2.zero;//ºñÈ°¼ºÈ­ ÀÌÀü¿¡ Àç»ç¿ëÀ» À§ÇØ ¹Ì¸® ¹°¸® ¼Óµµ ÃÊ±âÈ­
-            gameObject.SetActive(false); //ºñÈ°¼ºÈ­
+            rigid.linearVelocity = Vector2.zero;//ï¿½ï¿½È°ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ ï¿½Ê±ï¿½È­
+            gameObject.SetActive(false); //ï¿½ï¿½È°ï¿½ï¿½È­
         }
     }
 
