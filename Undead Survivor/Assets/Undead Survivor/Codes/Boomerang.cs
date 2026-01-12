@@ -34,7 +34,13 @@ public class Boomerang : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Enemy"))
-            hit = true;
+        {
+            if (hit == false)
+                hit = true;
+            Enemy hitEnemy = collision.GetComponent<Enemy>();
+            hitEnemy.TakeDamage(damage, gameObject.tag);
+        }
+  
     }
 
     void OnTriggerExit2D(Collider2D collision)

@@ -40,8 +40,14 @@ public class Weapon : MonoBehaviour
                     Fire();
                 }
                 break;
-            default:
+            case 7:
+                timer += Time.deltaTime;
 
+                if (timer > speed) 
+                {
+                    timer = 0;
+                    ThrowBomb();
+                }
                 break;
 
         }
@@ -100,8 +106,10 @@ public class Weapon : MonoBehaviour
             case 1:
                 speed = 0.3f * Character.WeaponRate;   //0.3초에 한번 발사 
                 break;
+            case 5:
+                speed = 0.3f * Character.WeaponRate;
+                break;
             default:
-
                 break;
         }
 
@@ -142,7 +150,7 @@ public class Weapon : MonoBehaviour
             //이동 방향이 Space.self가 아니라 World인 이유는? 이미 회전 후 위쪽 방향으로 1.5만큼 이동시키는 것으로 했으므로 이동 방향은 월드를 기준으로 설정
             bullet.Translate(bullet.up * 1.5f, Space.World);
             //Bullet의 Bullet 스크립트의 init 함수로 데미지 관통 초기화
-            bullet.GetComponent<Bullet>().Init(damage, -100, Vector2.zero); // -1 is Infinity Per. (근접공격은 무한 관통)
+            bullet.GetComponent<RotationWeapon>().Init(damage); 
         }
     }
 
@@ -160,6 +168,7 @@ public class Weapon : MonoBehaviour
 
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Range);
     }
+
     void BoomerangFire()
     {
         Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
@@ -173,12 +182,12 @@ public class Weapon : MonoBehaviour
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Range); // 해당 부메랑 소리 추가해야함 - 현재 일반 발사와 소리 같음
     }
 
-    void ThrowProjectile()
+    void ThrowBomb()
     {
         Transform projectile = GameManager.Instance.pool.Get(prefabId).transform;
+        Vector3 dir = CalcuDistance(player.scanner.randomTarget);
         projectile.position = transform.position;
-        //projectile.GetComponent<Projectile>().init()
-
+        projectile.GetComponent<Bomb>().init(damage, Random.Range(30f,80f), Random.Range(8f,11f), dir);
     }
 
     Vector3 CalcuDistance(Vector3 dest)

@@ -27,16 +27,17 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // ���Ϳ� ������ �ƴϰų�, ������ ������ ��� return
-        if (!collision.CompareTag("Enemy") || per == -100)
+        if (!collision.CompareTag("Enemy"))
             return;
 
         per--;
+        Enemy hitEnemy = collision.GetComponent<Enemy>();
+        hitEnemy.TakeDamage(damage, gameObject.tag);
 
-        if (per < 0) //per ��ġ��ŭ ���͸� ������ 0���� �۾����� ����
+        if (per < 0) 
         {
-            rigid.linearVelocity = Vector2.zero;//��Ȱ��ȭ ������ ������ ���� �̸� ���� �ӵ� �ʱ�ȭ
-            gameObject.SetActive(false); //��Ȱ��ȭ
+            rigid.linearVelocity = Vector2.zero; 
+            gameObject.SetActive(false); 
         }
     }
 
