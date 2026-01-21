@@ -40,7 +40,7 @@ public class Weapon : MonoBehaviour
                     Fire();
                 }
                 break;
-            case 7:
+            case 5:
                 timer += Time.deltaTime;
 
                 if (timer > speed) 
@@ -156,15 +156,15 @@ public class Weapon : MonoBehaviour
 
     void Fire()
     {
-        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
-        if (dir == Vector3.zero)
+        if (CalcuDistance(player.scanner.nearestTarget.position) == null)
             return;
 
+        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
         Transform bullet = GameManager.Instance.pool.Get(prefabId).transform;
         bullet.position = transform.position;
         //지정된 축을 중심으로 목표를 향해 회전하는 함수
         bullet.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        bullet.GetComponent<Bullet>().Init(damage, 3, dir); //관통을 count로 지정
+        bullet.GetComponent<Bullet>().Init(damage, 10, dir); //관통을 count로 지정
 
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Range);
     }
