@@ -37,7 +37,7 @@ public class Weapon : MonoBehaviour
                 if (timer > speed) //speed 보다 커지면 초기화하면서 발사 로직 수행
                 {
                     timer = 0; //타이머 초기화
-                    Fire();
+                    FireRange("Bullet");
                 }
                 break;
             case 5:
@@ -46,7 +46,16 @@ public class Weapon : MonoBehaviour
                 if (timer > speed) 
                 {
                     timer = 0;
-                    ThrowBomb();
+                    FireRange("Bomb");
+                }
+                break;
+            case 6:
+                timer += Time.deltaTime;
+
+                if (timer > speed) //speed 보다 커지면 초기화하면서 발사 로직 수행
+                {
+                    timer = 0; //타이머 초기화
+                    FireRange("Bounding");
                 }
                 break;
 
@@ -154,6 +163,32 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    void FireRange(string name)
+    {
+        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
+        if (dir == Vector3.zero)
+            return;
+        Transform Range = GameManager.Instance.pool.Get(prefabId).transform;
+        Range.position = transform.position;
+        Range.rotation = Quaternion.FromToRotation(Vector3.up, dir);
+        switch (name) 
+        {
+            case "Bullet":
+                Range.GetComponent<Bullet>().Init(damage, count, dir);
+                break;
+            case "Boomerang":
+                Range.GetComponent<Boomerang>().Init(damage, 3f, dir);
+                break;
+            case "Bomb":
+                Range.GetComponent<Bomb>().init(damage, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);
+                break;
+            case "Bounding":
+                Range.GetComponent<Boundingweapon>().Init(damage, count, dir);
+                break;
+        }
+        
+    }
+    /*
     void Fire()
     {
         if (CalcuDistance(player.scanner.nearestTarget.position) == null)
@@ -168,16 +203,14 @@ public class Weapon : MonoBehaviour
 
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Range);
     }
-
+    
     void BoomerangFire()
     {
-        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
-        if (dir == Vector3.zero)
-            return;
+
 
         Transform boomerang= GameManager.Instance.pool.Get(prefabId).transform;
         boomerang.position = transform.position;
-        boomerang.GetComponent<Boomerang>().Init(damage, 3f ,dir); 
+        boomerang.GetComponent<Boomerang>().Init(damage, 3f); 
 
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Range); // 해당 부메랑 소리 추가해야함 - 현재 일반 발사와 소리 같음
     }
@@ -189,7 +222,7 @@ public class Weapon : MonoBehaviour
         projectile.position = transform.position;
         projectile.GetComponent<Bomb>().init(damage, Random.Range(30f,80f), Random.Range(8f,11f), dir);
     }
-
+    */
     Vector3 CalcuDistance(Vector3 dest)
     {
         if (dest == null)
@@ -198,6 +231,6 @@ public class Weapon : MonoBehaviour
         Vector3 dir = dest - transform.position;
         return dir.normalized;
     }
-
+    
 
 }

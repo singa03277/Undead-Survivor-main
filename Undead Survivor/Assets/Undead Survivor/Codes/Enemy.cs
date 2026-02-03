@@ -9,8 +9,12 @@ public class Enemy : MonoBehaviour
     public float maxHealth;     //�ִ� ü��
     public RuntimeAnimatorController[] animCon;     //������ �ִϸ����͸� �ٲٱ� ���� ��Ʈ�ѷ�
     public Rigidbody2D target;  //��ǥ Rigidbody
+    private float dotTimer = 0f;
+    bool isLive;
+    private bool isDot = false;
+    private float DotTimer = 0f;
+    private float DotDamage = 0f;
 
-    bool isLive; //��������
 
     Rigidbody2D rigid;
     Collider2D coll;
@@ -31,6 +35,11 @@ public class Enemy : MonoBehaviour
     {
         if (!GameManager.Instance.isLive)
             return;
+
+        if (isDot)
+        {
+            StartCoroutine("DotRoutine");
+        }
 
         if (!isLive || anim.GetCurrentAnimatorStateInfo(0).IsName("Hit")) //�׾����� ����
             return;
@@ -109,7 +118,31 @@ public class Enemy : MonoBehaviour
 
     void Dead()
     {
-        //��Ȱ��ȭ�� ���ش�.
         gameObject.SetActive(false);
     }
+
+    IEnumerator DotRoroutine()
+    {
+        yield return new WaitForSeconds(2);
+        TakeDamage(DotDamage, "Dot");
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Dot"))
+        {
+            DotDamage = collision.GetComponent<Dot>().damage;
+            StartCoroutine("DotRoroutine");
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Dot"))
+        {
+            StopCoroutine("DotRoruotine");
+        }
+    }
 }
+
+//todo : 어떻게 하면 dot의 데미지를 받아오는가? 
+//1안 -> collision으로 받아온다. 

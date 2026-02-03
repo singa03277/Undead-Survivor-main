@@ -2,27 +2,22 @@ using UnityEngine;
 
 public class Dot : MonoBehaviour
 {
-    public float tickrate = 0.5f;
-    public float radius = 5f;
-    public float damage = 1f;
-    private float ticktimer = 0;
-    void Start()
+    public float damage;
+    private float durationTime = 3f;
+    private float durationTimer = 0f;
+    private float Timer = 0f;
+    private void FixedUpdate()
     {
-            
-    }
-
-    void Update()
-    {
-        ticktimer += Time.deltaTime;
-        if(ticktimer > tickrate)
+        if (gameObject.tag == "ProjectileDot")
         {
-            gameObject.tag = "Dot";
-            ticktimer = 0f;
-
+            durationTimer += Time.fixedDeltaTime;
+            if (durationTimer > durationTime)
+            {
+                durationTimer = 0f;
+                gameObject.SetActive(false);
+            }
         }
         else
-        {
-            gameObject.tag = "Untagged";
-        }
+            return;
     }
 }
