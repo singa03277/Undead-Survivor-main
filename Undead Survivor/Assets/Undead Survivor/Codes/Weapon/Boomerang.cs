@@ -22,7 +22,7 @@ public class Boomerang : MonoBehaviour
         }
     }
 
-    public void Init(float damage,float acccelerate ,Vector3 dir)
+    public void init(float damage,float acccelerate ,Vector3 dir)
     {
         this.damage = damage;
         this.accelerate = accelerate;

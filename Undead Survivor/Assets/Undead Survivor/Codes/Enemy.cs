@@ -126,8 +126,18 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(2);
         TakeDamage(DotDamage, "Dot");
     }
+    
 
-    private void OnTriggerEnter2D(Collider2D collision)
+
+}
+
+
+
+//todo : 어떻게 하면 dot의 데미지를 받아오는가? 
+//1안 -> collision으로 받아온다. 
+
+/*
+   private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Dot"))
         {
@@ -141,8 +151,4 @@ public class Enemy : MonoBehaviour
         {
             StopCoroutine("DotRoruotine");
         }
-    }
-}
-
-//todo : 어떻게 하면 dot의 데미지를 받아오는가? 
-//1안 -> collision으로 받아온다. 
+    }*/

@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     {
         if (!GameManager.Instance.isLive)
             return;
-
+        
         Vector2 nextVec = inputVec * speed * Time.fixedDeltaTime;
         rigid.MovePosition(rigid.position + nextVec);
     }

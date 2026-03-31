@@ -10,7 +10,6 @@ public class Scanner : MonoBehaviour
     public RaycastHit2D[] targets;  //스캔 결과 배열
     public Transform nearestTarget; //가장 가까운 목표
     public Vector3 randomTarget;
-    private float timer = 0f;
     void FixedUpdate()
     {
         // 원형의 캐스트를 쏘고 모든 결과를 반환하는 함수 

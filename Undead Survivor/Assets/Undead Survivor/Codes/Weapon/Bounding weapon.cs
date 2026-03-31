@@ -4,7 +4,7 @@ public class Boundingweapon : MonoBehaviour
 {
     private float damage;
     private float bounceCount;
-    private Vector2 RefDir;
+    private Vector2 dir;
     private Rigidbody2D rb;
     
     private void Awake()
@@ -12,23 +12,26 @@ public class Boundingweapon : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void Init(float damage, float boundCount,Vector3 dir)
+    public void init(float damage, float boundCount,Vector3 dir)
     {
         this.damage= damage;
         this.bounceCount= boundCount;
+        this.dir = dir;
         rb.linearVelocity = dir * 15f;
+        
     }
 
-    void OnCollisionExit2D(Collision2D collision)
+    void OnCollision2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("MainCamera"))
         {
-            Debug.Log("collision");
-            RefDir = Vector2.Reflect(rb.linearVelocity.normalized, collision.contacts[0].normal);
             bounceCount--;
         }
-        rb.linearVelocity = RefDir * 15f;
+        rb.linearVelocity = dir * 15f;
     }
+
+    
+
     private void FixedUpdate()
     {
         if(bounceCount <= -1)

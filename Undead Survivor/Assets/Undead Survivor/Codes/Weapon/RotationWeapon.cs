@@ -3,7 +3,7 @@ using UnityEngine;
 public class RotationWeapon : MonoBehaviour
 {
     public float damage;
-    public void Init(float damage)
+    public void init(float damage)
     {
         this.damage = damage;
     }

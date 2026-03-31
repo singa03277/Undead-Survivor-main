@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 223472638483046896}
   - component: {fileID: 1585295454024947288}
   - component: {fileID: 6524523974805804090}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bullet 3
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -148,13 +148,13 @@ Rigidbody2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8462740780204974709}
   m_BodyType: 0
-  m_Simulated: 0
+  m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

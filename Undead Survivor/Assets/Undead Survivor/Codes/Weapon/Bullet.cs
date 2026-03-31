@@ -7,7 +7,6 @@ public class Bullet : MonoBehaviour
 {
     public float damage;   //������
     public int per;        //����
-
     Rigidbody2D rigid;
 
     private void Awake()
@@ -15,7 +14,7 @@ public class Bullet : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    public void Init(float damage, int per, Vector3 dir)
+    public void init(float damage, int per, Vector3 dir)
     {
         this.damage = damage;   //Bullet�� �������� �Ű����� �������� �ʱ�ȭ
         this.per = per;         //Bullet�� ������ �Ű����� �������� �ʱ�ȭ
@@ -27,22 +26,29 @@ public class Bullet : MonoBehaviour
         if (!collision.CompareTag("Enemy"))
             return;
 
-        per--;
-        Enemy hitEnemy = collision.GetComponent<Enemy>();
-        hitEnemy.TakeDamage(damage, gameObject.tag);
 
+        if (collision.CompareTag("Enemy"))
+        {
+            Enemy hitEnemy = collision.GetComponent<Enemy>();
+            hitEnemy.TakeDamage(damage, gameObject.tag);
+            per--;
+        }
         if (per < 0) 
         {
             rigid.linearVelocity = Vector2.zero; 
             gameObject.SetActive(false); 
         }
+
+
     }
+
+
 
     void OnTriggerExit2D(Collider2D collision)
     {
         if (!collision.CompareTag("Area") || per == -100)
             return;
-
+            
         gameObject.SetActive(false);
     }
 }

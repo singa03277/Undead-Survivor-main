@@ -3,17 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+//튕기는 무기 현재 튕기는 로직 및 기타 호환 문제로 뒤로 미룬상태
+public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 따라서 다른 작동을 보여준다)
 {
-    public int id;          //무기 id
-    public int prefabId;    //프리팹 id
-    public float damage;    //데미지
-    public int count;       //개수
-    public float speed;     //속도
+    public int id;
+    public int prefabId;
+    public float damage;
+    public int count;
+    public float speed;
+    private bool isEvolve = false; //진화 무기 개발 시 사용될 변수
 
-    public float timer;     //타이머
-    Player player;          //플레이어가 저장될 변수
-
+    public float timer;
+    Player player;
+    
     void Awake()
     {
         player = GameManager.Instance.player;
@@ -24,26 +26,24 @@ public class Weapon : MonoBehaviour
         if (!GameManager.Instance.isLive)
             return;
 
-        //무기 id에 맞게 로직 구현
         switch (id)
         {
             case 0:
-                //z축 방향으로 back 방향으로 회전 (Speed가 음수라서 back 방향으로 지정)
                 transform.Rotate(Vector3.back * speed * Time.deltaTime);
                 break;
             case 1:
                 timer += Time.deltaTime;
 
-                if (timer > speed) //speed 보다 커지면 초기화하면서 발사 로직 수행
+                if (timer > speed)
                 {
-                    timer = 0; //타이머 초기화
+                    timer = 0;
                     FireRange("Bullet");
                 }
                 break;
             case 5:
                 timer += Time.deltaTime;
 
-                if (timer > speed) 
+                if (timer > speed)
                 {
                     timer = 0;
                     FireRange("Bomb");
@@ -52,11 +52,21 @@ public class Weapon : MonoBehaviour
             case 6:
                 timer += Time.deltaTime;
 
-                if (timer > speed) //speed 보다 커지면 초기화하면서 발사 로직 수행
+                if (timer > speed*10)
                 {
-                    timer = 0; //타이머 초기화
+                    timer = 0;
                     FireRange("Bounding");
                 }
+                break;
+            case 7:
+                timer += Time.deltaTime;
+
+                break;
+            case 8:
+                timer += Time.deltaTime;
+                Debug.Log(timer);
+                break;
+            default:
                 break;
 
         }
@@ -67,23 +77,9 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    public void LevelUp(float damage, int count)
-    {
-        this.damage = damage * Character.Damage;
-        this.count += count;
-
-        if (id == 0) //id가 0이면 재배치
-            Batch();
-
-        //Weapon이 레벨업하면 ApplyGear로 레벨업한 무기에 Gear 레벨을 적용
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //플레이어에게 broadcast해주도록 부탁
-        //플레이어가 가지고 있는 모든 Gear에 한해서 ApplyGear가 실행
-    }
-
-
     public void Init(ItemData data)
     {
-        //Basic Set
+        
         name = "Weapon " + data.itemId; //이름 설정
         transform.parent = player.transform; //부모 오브젝트 설정
         //플레이어 안에서 위치를 0, 0, 0으로 맞추기 때문에 LocalPostion 사용
@@ -93,7 +89,7 @@ public class Weapon : MonoBehaviour
         id = data.itemId;
         damage = data.baseDamage * Character.Damage;
         count = data.baseCount + Character.Count;
-
+        
         for (int i = 0; i < GameManager.Instance.pool.prefabs.Length; i++)
         {
             //프리팹 아이디는 풀링 매니저의 변수에서 찾아서 초기화
@@ -110,34 +106,104 @@ public class Weapon : MonoBehaviour
         {
             case 0:
                 speed = 150 * Character.WeaponSpeed;   //마이너스 = 시계방향
-                Batch();        //무기 배치          
+                Batch();
                 break;
             case 1:
-                speed = 0.3f * Character.WeaponRate;   //0.3초에 한번 발사 
+                speed = 0.3f * Character.WeaponRate;    
                 break;
             case 5:
                 speed = 0.3f * Character.WeaponRate;
                 break;
+            case 6:
+                speed = 0.3f * Character.WeaponRate;
+                break;
+            case 7:
+                speed = 10 * Character.WeaponRate;
+                SpawnLaser();
+                break;
+            case 8:
+                speed = 10 * Character.WeaponRate;
+                
+                break;
             default:
                 break;
         }
-
-        // Hand Set
         Hand hand = player.hands[(int)data.itemType]; //아이템 타입에 맞는 핸드를 아이템을 hand에 연결
         hand.spriter.sprite = data.hand; //추가해놨던 hand sprite를 적용
         hand.gameObject.SetActive(true);
 
         //Weapon이 새롭게 추가되면 ApplyGear로 새롭게 추가된 무기에 Gear 레벨을 적용
         player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //플레이어에게 broadcast해주도록 부탁
-        
+
+    }
+
+    void MeleeAttack()
+    {
+        Transform Melee = GameManager.Instance.pool.Get(prefabId).transform;
+        Melee.position = transform.position;
+        Melee.Translate(Melee.up * 1.5f, Space.World);
+        //Melee.GetComponent<FrontAttack>().init(damage);
+    }
+
+    void FireRange(string name) //진화 여부에 따라서도 분류할예정
+    {
+        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
+        if (dir == Vector3.zero)
+            return;
+        Transform Range = GameManager.Instance.pool.Get(prefabId).transform;
+        Range.position = transform.position;
+        Range.rotation = Quaternion.FromToRotation(Vector3.up, dir);
+        switch (name)
+        {
+            case "Bullet":
+                Range.GetComponent<Bullet>().init(damage, count, dir);
+                break;
+            case "Boomerang":
+                Range.GetComponent<Boomerang>().init(damage, 3f, dir);
+                break;
+            case "Bomb":
+                Range.GetComponent<Bomb>().init(damage, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);    
+                break;
+            case "Bounding":
+                Range.GetComponent<Boundingweapon>().init(damage, count, dir);
+                break;
+            case "Dot":
+                //Range.GetComponent<Dot>().init(damage, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);
+                break;
+
+        }
+
+    }
+    Vector3 CalcuDistance(Vector3 dest)
+    {
+        if (dest == null)
+            return Vector3.zero;
+
+        Vector3 dir = dest - transform.position;
+        return dir.normalized;
+    }
+
+    // ----------------------------------현재는 쓰이지 않는 코드-----------------------------------
+    public void LevelUp(float damage, int count)
+    {
+        this.damage = damage * Character.Damage;
+        this.count += count;
+
+        if (id == 0) //id가 0이면 재배치
+            Batch();
+
+        //Weapon이 레벨업하면 ApplyGear로 레벨업한 무기에 Gear 레벨을 적용
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //플레이어에게 broadcast해주도록 부탁
+        //플레이어가 가지고 있는 모든 Gear에 한해서 ApplyGear가 실행
     }
 
     void Batch()// 생성된 무기를 배치하는 함수
     {
         for (int i = 0; i < count; i++)
         {
-            //prefabId에 해당하는 prefab을 가져오면서 동시에 transform을 지역변수에 저장
+
             Transform bullet;
+            
             // 기존 오브젝트를 먼저 활용하고 모자란 것은 풀링에서 가져오기
             if (i < transform.childCount) // 자식을 가지고 있으면 새로 꺼내지 않고
             {
@@ -150,87 +216,38 @@ public class Weapon : MonoBehaviour
                                             //- 기존 자식 오브젝트로 사용중이던 것은 이미 설정이 되어있음
             }
 
-            bullet.localPosition = Vector3.zero; //bullet의 localPostion이 0으로 초기화 = 플레이어의 위치
-            bullet.localRotation = Quaternion.identity; //Rotation값은 Quaternion형 값, 초기값은 identity
+            bullet.localPosition = Vector3.zero;
+            bullet.localRotation = Quaternion.identity;
 
             Vector3 rotVec = Vector3.forward * 360 * i / count; //i번째 무기의 회전 각도를 계산
             bullet.Rotate(rotVec);                              //rotVec만큼 회전
-            //Local 기준으로 방향이 위쪽으로 1.5만큼 이동 
+             
             //이동 방향이 Space.self가 아니라 World인 이유는? 이미 회전 후 위쪽 방향으로 1.5만큼 이동시키는 것으로 했으므로 이동 방향은 월드를 기준으로 설정
             bullet.Translate(bullet.up * 1.5f, Space.World);
-            //Bullet의 Bullet 스크립트의 init 함수로 데미지 관통 초기화
-            bullet.GetComponent<RotationWeapon>().Init(damage); 
+            bullet.GetComponent<RotationWeapon>().init(damage);
         }
     }
-
-    void FireRange(string name)
+    void SpawnLaser()
     {
-        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
-        if (dir == Vector3.zero)
-            return;
-        Transform Range = GameManager.Instance.pool.Get(prefabId).transform;
-        Range.position = transform.position;
-        Range.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        switch (name) 
-        {
-            case "Bullet":
-                Range.GetComponent<Bullet>().Init(damage, count, dir);
-                break;
-            case "Boomerang":
-                Range.GetComponent<Boomerang>().Init(damage, 3f, dir);
-                break;
-            case "Bomb":
-                Range.GetComponent<Bomb>().init(damage, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);
-                break;
-            case "Bounding":
-                Range.GetComponent<Boundingweapon>().Init(damage, count, dir);
-                break;
-        }
-        
-    }
-    /*
-    void Fire()
-    {
-        if (CalcuDistance(player.scanner.nearestTarget.position) == null)
-            return;
+        Transform Laser;
+        Laser = GameManager.Instance.pool.Get(prefabId).transform;
+        Laser.parent = transform;
 
-        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
-        Transform bullet = GameManager.Instance.pool.Get(prefabId).transform;
-        bullet.position = transform.position;
-        //지정된 축을 중심으로 목표를 향해 회전하는 함수
-        bullet.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        bullet.GetComponent<Bullet>().Init(damage, 10, dir); //관통을 count로 지정
+        Laser.localPosition = Vector3.zero;
+        Laser.localRotation = Quaternion.identity;
 
-        AudioManager.instance.PlaySfx(AudioManager.Sfx.Range);
-    }
-    
-    void BoomerangFire()
-    {
-
-
-        Transform boomerang= GameManager.Instance.pool.Get(prefabId).transform;
-        boomerang.position = transform.position;
-        boomerang.GetComponent<Boomerang>().Init(damage, 3f); 
-
-        AudioManager.instance.PlaySfx(AudioManager.Sfx.Range); // 해당 부메랑 소리 추가해야함 - 현재 일반 발사와 소리 같음
+        Laser.GetComponent<Laser>().init(damage,count);
     }
 
-    void ThrowBomb()
+    void SpawnFront()
     {
-        Transform projectile = GameManager.Instance.pool.Get(prefabId).transform;
-        Vector3 dir = CalcuDistance(player.scanner.randomTarget);
-        projectile.position = transform.position;
-        projectile.GetComponent<Bomb>().init(damage, Random.Range(30f,80f), Random.Range(8f,11f), dir);
-    }
-    */
-    Vector3 CalcuDistance(Vector3 dest)
-    {
-        if (dest == null)
-            return Vector3.zero;
+        Transform Front;
+        Front = GameManager.Instance.pool.Get(prefabId).transform;
+        Front.parent = transform;
 
-        Vector3 dir = dest - transform.position;
-        return dir.normalized;
-    }
-    
+        Front.localPosition = Vector3.zero;
+        Front.localRotation = Quaternion.identity;
 
+        Front.GetComponent<FrontAttack>().init(damage);
+    }
 }
