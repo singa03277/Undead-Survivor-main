@@ -16,16 +16,15 @@ public class Bullet : MonoBehaviour
 
     public void init(float damage, int per, Vector3 dir)
     {
-        this.damage = damage;   //Bullet�� �������� �Ű����� �������� �ʱ�ȭ
-        this.per = per;         //Bullet�� ������ �Ű����� �������� �ʱ�ȭ
-        rigid.linearVelocity = dir * 15f; //�ӵ��� 15�� ��� 
+        this.damage = damage; 
+        this.per = per;         
+        rigid.linearVelocity = dir * 15f; 
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (!collision.CompareTag("Enemy"))
             return;
-
 
         if (collision.CompareTag("Enemy"))
         {
@@ -38,8 +37,6 @@ public class Bullet : MonoBehaviour
             rigid.linearVelocity = Vector2.zero; 
             gameObject.SetActive(false); 
         }
-
-
     }
 
 

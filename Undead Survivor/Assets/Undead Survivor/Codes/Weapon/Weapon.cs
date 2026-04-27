@@ -64,7 +64,18 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 break;
             case 8:
                 timer += Time.deltaTime;
-                Debug.Log(timer);
+            
+                break;
+            case 9:
+                timer += Time.deltaTime;
+                if(timer > speed * 10)
+                {
+                    timer = 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        FireRange("SequenceBullet");
+                    }
+                }
                 break;
             default:
                 break;
@@ -123,7 +134,10 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 break;
             case 8:
                 speed = 10 * Character.WeaponRate;
-                
+                SpawnFront();
+                break;
+            case 9:
+                speed = 10 * Character.WeaponRate;
                 break;
             default:
                 break;
@@ -169,6 +183,9 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 break;
             case "Dot":
                 //Range.GetComponent<Dot>().init(damage, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);
+                break;
+            case "SequenceBullet":
+                Range.GetComponent<Bullet>().init(damage, 0, dir);
                 break;
 
         }
