@@ -15,7 +15,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
 
     public float timer;
     Player player;
-    
+    ItemData data;
     void Awake()
     {
         player = GameManager.Instance.player;
@@ -68,13 +68,23 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 break;
             case 9:
                 timer += Time.deltaTime;
-                if(timer > speed * 10)
+                if(timer > speed)
+                {
+                    Debug.Log(timer);
+                    timer = 0;
+                    FireRange("Dot");
+                    Debug.Log("발사");
+                }
+                break;
+            case 10:
+                timer += Time.deltaTime;
+                break;
+            case 11:
+                timer += Time.deltaTime;
+                if( timer > speed)
                 {
                     timer = 0;
-                    for (int i = 0; i < count; i++)
-                    {
-                        FireRange("SequenceBullet");
-                    }
+                    FireRange("SequenceBullet");
                 }
                 break;
             default:
@@ -139,6 +149,13 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
             case 9:
                 speed = 10 * Character.WeaponRate;
                 break;
+            case 10:
+                speed = 10 * Character.WeaponRate;
+                SpawnArea();
+                break;
+            case 11:
+                speed = 10 * Character.WeaponRate;
+                break;
             default:
                 break;
         }
@@ -149,14 +166,6 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         //Weapon이 새롭게 추가되면 ApplyGear로 새롭게 추가된 무기에 Gear 레벨을 적용
         player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //플레이어에게 broadcast해주도록 부탁
 
-    }
-
-    void MeleeAttack()
-    {
-        Transform Melee = GameManager.Instance.pool.Get(prefabId).transform;
-        Melee.position = transform.position;
-        Melee.Translate(Melee.up * 1.5f, Space.World);
-        //Melee.GetComponent<FrontAttack>().init(damage);
     }
 
     void FireRange(string name) //진화 여부에 따라서도 분류할예정
@@ -176,13 +185,13 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 Range.GetComponent<Boomerang>().init(damage, 3f, dir);
                 break;
             case "Bomb":
-                Range.GetComponent<Bomb>().init(damage, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);    
+                Range.GetComponent<Projectile>().init(damage, count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);    
                 break;
             case "Bounding":
                 Range.GetComponent<Boundingweapon>().init(damage, count, dir);
                 break;
             case "Dot":
-                //Range.GetComponent<Dot>().init(damage, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);
+                Range.GetComponent<Projectile>().init(damage,count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);
                 break;
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(damage, 0, dir);
@@ -200,7 +209,8 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         return dir.normalized;
     }
 
-    // ----------------------------------현재는 쓰이지 않는 코드-----------------------------------
+    // Vector3 랜덤으로 나오는 함수도 제작 필요
+
     public void LevelUp(float damage, int count)
     {
         this.damage = damage * Character.Damage;
@@ -230,7 +240,6 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
             {
                 bullet = GameManager.Instance.pool.Get(prefabId).transform;
                 bullet.parent = transform;  //새로 가져오는 것들만 parent를 설정해주면 된다. 
-                                            //- 기존 자식 오브젝트로 사용중이던 것은 이미 설정이 되어있음
             }
 
             bullet.localPosition = Vector3.zero;
@@ -266,5 +275,17 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         Front.localRotation = Quaternion.identity;
 
         Front.GetComponent<FrontAttack>().init(damage);
+    }
+    
+    void SpawnArea()
+    {
+        Transform Area;
+
+        Area = GameManager.Instance.pool.Get(prefabId).transform;
+        Area.parent = transform;
+
+        Area.localPosition = Vector3.zero;
+        Area.localRotation = Quaternion.identity;
+        Area.GetComponent<SlowArea>().init(damage, count);
     }
 }

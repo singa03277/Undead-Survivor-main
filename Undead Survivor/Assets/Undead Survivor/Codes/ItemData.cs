@@ -13,6 +13,7 @@ public class ItemData : ScriptableObject
     public ItemType itemType;
     public int itemId;
     public string itemName;
+    public bool isKnockback;
     [TextArea]
     public string itemDesc;
     public Sprite itemIcon;

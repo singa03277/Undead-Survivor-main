@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -9097898085327806033}
   m_Layer: 0
   m_Name: Bullet 2
-  m_TagString: Bullet
+  m_TagString: Bomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -103,6 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
+  DotObject: {fileID: 0}
 --- !u!136 &4524126821567481809
 CapsuleCollider:
   m_ObjectHideFlags: 0

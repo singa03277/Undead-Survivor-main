@@ -1,26 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows.Speech;
 
 public class Enemy : MonoBehaviour
 {
-    public float speed;         //�ӵ�
+    public float speed;
+    public float calcuspeed;
     public float health;        //ü��
     public float maxHealth;     //�ִ� ü��
     public RuntimeAnimatorController[] animCon;     //������ �ִϸ����͸� �ٲٱ� ���� ��Ʈ�ѷ�
-    public Rigidbody2D target;  //��ǥ Rigidbody
+    public Rigidbody2D target; 
     private float dotTimer = 0f;
     bool isLive;
     private bool isDot = false;
     private float DotTimer = 0f;
     private float DotDamage = 0f;
-
+    private bool isSlow = false;
 
     Rigidbody2D rigid;
     Collider2D coll;
     Animator anim;
     SpriteRenderer spriter;
     WaitForFixedUpdate wait;
+    Item item;
 
     void Awake()
     {
@@ -45,10 +48,9 @@ public class Enemy : MonoBehaviour
             return;
 
         Vector2 dirVec = target.position - rigid.position; // ���� = ��ġ ������ ����ȭ (��ġ ���� = Ÿ�� ��ġ - ���� ��ġ)
-        Vector2 nextVec = dirVec.normalized * speed * Time.fixedDeltaTime; //����(����ȭ) * �ӵ� * ������ �ð� ����
-        rigid.MovePosition(rigid.position + nextVec); //���� ��ġ�� next���͸� ���Ѵ�.
-        //�ٸ� ������ٵ�� �ε����� �Ǹ� ���� �ӵ��� ����µ� �츮�� ��ġ �̵��� ä���ϰ� �����Ƿ� ���� �ӵ��� ��ġ�� ��ȭ�ϸ� �ȵǹǷ� velocity�� 0 �����
-        rigid.linearVelocity = Vector2.zero; //���� �ӵ��� �̵��� ������ ���� �ʵ��� �ӵ��� ���� 
+        Vector2 nextVec = dirVec.normalized * calcuspeed * Time.fixedDeltaTime; 
+        rigid.MovePosition(rigid.position + nextVec); 
+        rigid.linearVelocity = Vector2.zero; 
     }
 
     private void LateUpdate()
@@ -56,10 +58,9 @@ public class Enemy : MonoBehaviour
         if (!GameManager.Instance.isLive)
             return;
 
-        if (!isLive) //�׾����� ����
+        if (!isLive) 
             return;
  
-        //��ǥ�� x��� �ڽ��� x�� ���� ���Ͽ� ������ X���� �������� Flip �ǵ��� FlipX�� True�� ����
         spriter.flipX = target.position.x < rigid.position.x;
     }
 
@@ -80,7 +81,8 @@ public class Enemy : MonoBehaviour
         anim.runtimeAnimatorController = animCon[data.spriteType];  //�ִϸ��̼� ����
         speed = data.speed;         //�ӵ� ����
         maxHealth = data.health;    //ü�� ����
-        health = data.health;                                           
+        health = data.health;
+        calcuspeed = speed;
     }
 
     public void TakeDamage(float damage,string type) //해당 함수로 변경 : 기타 무기와 호환을 위해서 collision -> 함수로 대체 (무기 타입에 따라서 knockback 함수 실행예정)
@@ -108,7 +110,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-        IEnumerator KnockBack()
+    IEnumerator KnockBack()
     {
         yield return wait; // ���� �ϳ��� ���� �������� ������
         Vector3 playerPos = GameManager.Instance.player.transform.position; //Player�� Postion
@@ -123,32 +125,39 @@ public class Enemy : MonoBehaviour
 
     IEnumerator DotRoroutine()
     {
-        yield return new WaitForSeconds(2);
-        TakeDamage(DotDamage, "Dot");
-    }
-    
-
-
-}
-
-
-
-//todo : 어떻게 하면 dot의 데미지를 받아오는가? 
-//1안 -> collision으로 받아온다. 
-
-/*
-   private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Dot"))
+        while (true)
         {
-            DotDamage = collision.GetComponent<Dot>().damage;
+            yield return new WaitForSeconds(0.5f);
+            TakeDamage(3, "Dot"); //임시로 한것 데미지 아이템 데이터에서 받아오도록
+        }
+        
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("SlowArea") && isSlow == false)
+        {
+            isSlow = true;
+            calcuspeed = speed * ((100f - collision.GetComponent<SlowArea>().slowPer)/100f);
+            
+        }
+        else if (collision.CompareTag("Dot"))
+        {
             StartCoroutine("DotRoroutine");
         }
     }
-    private void OnTriggerExit2D(Collider2D collision)
+    void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Dot"))
+        if (collision.CompareTag("SlowArea") && isSlow == true)
         {
-            StopCoroutine("DotRoruotine");
+            isSlow = false;
+            calcuspeed = speed;
         }
-    }*/
+        else if(collision.CompareTag("Dot")){
+            StopCoroutine("DotRoroutine");
+        }
+    }
+}
+
+//무기 다 만들고 할일 : 함수 리팩토링(itemdata와 연결해서 조금 더 유연하게 코드를 짠다. - 아이템 무기 유형 등으로 계산해서 바로 가져오기 가능하게 시도), 그리고 데이터에 넉백여부도 확인해서 거기에 맞춰서 넉백 넣기
+//0514 재수정 - 게임씬에서 weapon 클래스로 존재하는데 해당 클래스에 id를 통해서 아이템 데이터에 대한 정보를 남김 - 

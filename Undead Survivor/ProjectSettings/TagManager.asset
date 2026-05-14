@@ -9,6 +9,9 @@ TagManager:
   - Enemy
   - Bullet
   - Screen
+  - Dot
+  - SlowArea
+  - Bomb
   layers:
   - Default
   - TransparentFX
