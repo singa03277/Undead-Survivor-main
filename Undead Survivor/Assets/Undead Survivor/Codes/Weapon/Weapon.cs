@@ -52,7 +52,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
             case 6:
                 timer += Time.deltaTime;
 
-                if (timer > speed*10)
+                if (timer > speed)
                 {
                     timer = 0;
                     FireRange("Bounding");

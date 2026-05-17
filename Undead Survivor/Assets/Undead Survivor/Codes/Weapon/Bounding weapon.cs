@@ -1,10 +1,10 @@
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 public class Boundingweapon : MonoBehaviour
 {
     private float damage;
     private float bounceCount;
-    private Vector2 dir;
     private Rigidbody2D rb;
     
     private void Awake()
@@ -16,21 +16,37 @@ public class Boundingweapon : MonoBehaviour
     {
         this.damage= damage;
         this.bounceCount= boundCount;
-        this.dir = dir;
         rb.linearVelocity = dir * 15f;
         
     }
 
-    void OnCollision2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("MainCamera"))
+        if (collision.CompareTag("Screen"))
         {
+            Debug.Log("Screen trigger");
+            Vector2 diff = (Vector2)transform.position - collision.ClosestPoint(transform.position);
+            Vector2 normal;
+            Vector2 Refdir = rb.linearVelocity.normalized;
+            if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+            {
+                normal = diff.x > 0 ? Vector2.right : Vector2.left;
+            }
+            else
+            {
+                normal = diff.y > 0 ? Vector2.up : Vector2.down;
+            }
+
+            rb.linearVelocity = Vector2.Reflect(Refdir, normal).normalized * 15f;
             bounceCount--;
         }
-        rb.linearVelocity = dir * 15f;
+        else if (collision.CompareTag("Enemy"))
+        {
+            Enemy hitEnemy = collision.GetComponent<Enemy>();
+            hitEnemy.TakeDamage(damage, gameObject.tag);
+        }
     }
 
-    
 
     private void FixedUpdate()
     {
