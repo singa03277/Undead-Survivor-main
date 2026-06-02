@@ -13,6 +13,7 @@ public class ItemData : ScriptableObject
     public ItemType itemType;
     public int itemId;
     public string itemName;
+    public bool isRandomPlace;
     public bool isKnockback;
     [TextArea]
     public string itemDesc;

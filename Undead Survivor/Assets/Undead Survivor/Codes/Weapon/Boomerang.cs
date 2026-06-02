@@ -6,7 +6,7 @@ public class Boomerang : MonoBehaviour
     private bool hit;
     private float accelerate;
     private Vector3 dir;
-
+    private bool isKnockBack;
     Rigidbody2D rigid;
 
     private void Awake()
@@ -22,11 +22,12 @@ public class Boomerang : MonoBehaviour
         }
     }
 
-    public void init(float damage,float acccelerate ,Vector3 dir)
+    public void init(float damage,float acccelerate ,Vector3 dir, bool isKnockBack)
     {
         this.damage = damage;
         this.accelerate = accelerate;
         this.dir = dir;
+        this.isKnockBack = isKnockBack;
         hit = false;
         rigid.linearVelocity = dir * 10f;
     }
@@ -38,7 +39,7 @@ public class Boomerang : MonoBehaviour
             if (hit == false)
                 hit = true;
             Enemy hitEnemy = collision.GetComponent<Enemy>();
-            hitEnemy.TakeDamage(damage, gameObject.tag);
+            hitEnemy.TakeDamage(damage, gameObject.tag, isKnockBack);
         }
   
     }

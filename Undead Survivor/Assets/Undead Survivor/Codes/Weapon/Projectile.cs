@@ -13,6 +13,7 @@ public class Projectile : MonoBehaviour
     public float damage;
     private RaycastHit2D[] Enemys;
     public Dot DotObject;
+    private bool isKnockBack;
     Rigidbody projectileRB;
     
     private void Awake()
@@ -20,13 +21,14 @@ public class Projectile : MonoBehaviour
         projectileRB = GetComponent<Rigidbody>();
     }
 
-    public void init(float damage,float count ,float degree, float power, Vector3 target)
+    public void init(float damage,float count ,float degree, float power, Vector3 target, bool isKnockBack)
     {
         isArrived = false;
         Timer = 0f;
         this.target = target;
         this.damage = damage;
         this.count = count;
+        this.isKnockBack = isKnockBack;
         projectileRB.AddForce(target * power, ForceMode.Impulse);
         if(DotObject == null)
             gameObject.tag = "Bomb";
@@ -58,7 +60,7 @@ public class Projectile : MonoBehaviour
                 foreach (RaycastHit2D scanEnemy in Enemys)
                 {
                     Enemy enemy = scanEnemy.collider.GetComponent<Enemy>();
-                    enemy.TakeDamage(damage, gameObject.tag);
+                    enemy.TakeDamage(damage, gameObject.tag, isKnockBack);
                 }
                 gameObject.SetActive(false);
             }
@@ -66,7 +68,7 @@ public class Projectile : MonoBehaviour
         if(isArrived && CompareTag("Dot"))
         {
             Dot dot = Instantiate(DotObject, transform.position, Quaternion.identity);
-            dot.init(damage, count);
+            dot.init(damage, count, isKnockBack);
             gameObject.SetActive(false);
         }   
     }

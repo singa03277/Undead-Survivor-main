@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -1996492401797189089}
   - component: {fileID: -7579315057396257088}
   m_Layer: 0
-  m_Name: Bullet 8
+  m_Name: SlowArea
   m_TagString: SlowArea
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

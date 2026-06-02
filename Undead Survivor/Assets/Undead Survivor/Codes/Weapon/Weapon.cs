@@ -11,8 +11,11 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
     public float damage;
     public int count;
     public float speed;
+    public bool isKnockBack = false;
+    private bool isRandom = false;
+    private bool isShoot = false;
+    private float SequenceCount;
     private bool isEvolve = false; //진화 무기 개발 시 사용될 변수
-
     public float timer;
     Player player;
     ItemData data;
@@ -38,6 +41,35 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 {
                     timer = 0;
                     FireRange("Bullet");
+                }
+                break;
+            case 2:
+                timer += Time.deltaTime;
+                if (timer > speed)
+                {
+                    Debug.Log(timer);
+                    timer = 0;
+                    FireRange("Dot");
+                    Debug.Log("발사");
+                }
+                break;
+            case 3:
+                timer += Time.deltaTime;
+                break;
+            case 4:
+                timer += Time.deltaTime;
+                if(timer > speed && isShoot == false)
+                {
+                    timer = 0;
+                    isShoot= true;
+                    StartCoroutine("SequenceShot");
+                    
+                }
+                if(SequenceCount == count)
+                {
+                    SequenceCount = 0;
+                    isShoot= false;
+                    StopCoroutine("SequenceShot");
                 }
                 break;
             case 5:
@@ -66,27 +98,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 timer += Time.deltaTime;
             
                 break;
-            case 9:
-                timer += Time.deltaTime;
-                if(timer > speed)
-                {
-                    Debug.Log(timer);
-                    timer = 0;
-                    FireRange("Dot");
-                    Debug.Log("발사");
-                }
-                break;
-            case 10:
-                timer += Time.deltaTime;
-                break;
-            case 11:
-                timer += Time.deltaTime;
-                if( timer > speed)
-                {
-                    timer = 0;
-                    FireRange("SequenceBullet");
-                }
-                break;
+ 
             default:
                 break;
 
@@ -100,7 +112,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
 
     public void Init(ItemData data)
     {
-        
+        this.data = data;
         name = "Weapon " + data.itemId; //이름 설정
         transform.parent = player.transform; //부모 오브젝트 설정
         //플레이어 안에서 위치를 0, 0, 0으로 맞추기 때문에 LocalPostion 사용
@@ -110,7 +122,9 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         id = data.itemId;
         damage = data.baseDamage * Character.Damage;
         count = data.baseCount + Character.Count;
-        
+        isRandom = data.isRandomPlace;
+
+
         for (int i = 0; i < GameManager.Instance.pool.prefabs.Length; i++)
         {
             //프리팹 아이디는 풀링 매니저의 변수에서 찾아서 초기화
@@ -132,6 +146,16 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
             case 1:
                 speed = 0.3f * Character.WeaponRate;    
                 break;
+            case 2:
+                speed = 10 * Character.WeaponRate;
+                break;
+            case 3:
+                speed = 10 * Character.WeaponRate;
+                SpawnArea();
+                break;
+            case 4:
+                speed = 5f * Character.WeaponRate;
+                break;
             case 5:
                 speed = 0.3f * Character.WeaponRate;
                 break;
@@ -145,16 +169,6 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
             case 8:
                 speed = 10 * Character.WeaponRate;
                 SpawnFront();
-                break;
-            case 9:
-                speed = 10 * Character.WeaponRate;
-                break;
-            case 10:
-                speed = 10 * Character.WeaponRate;
-                SpawnArea();
-                break;
-            case 11:
-                speed = 10 * Character.WeaponRate;
                 break;
             default:
                 break;
@@ -170,7 +184,16 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
 
     void FireRange(string name) //진화 여부에 따라서도 분류할예정
     {
-        Vector3 dir = CalcuDistance(player.scanner.nearestTarget.position);
+        Vector3 dir;
+        if (isRandom)
+        {
+            dir = CalcuDistance(player.scanner.randomTarget);
+        }
+        else
+        {
+            dir = CalcuDistance(player.scanner.nearestTarget.position);
+        }
+            
         if (dir == Vector3.zero)
             return;
         Transform Range = GameManager.Instance.pool.Get(prefabId).transform;
@@ -179,27 +202,28 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         switch (name)
         {
             case "Bullet":
-                Range.GetComponent<Bullet>().init(damage, count, dir);
+                Range.GetComponent<Bullet>().init(damage, count, dir, data.isKnockback);
                 break;
             case "Boomerang":
-                Range.GetComponent<Boomerang>().init(damage, 3f, dir);
+                Range.GetComponent<Boomerang>().init(damage, 3f, dir, data.isKnockback);
                 break;
             case "Bomb":
-                Range.GetComponent<Projectile>().init(damage, count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);    
+                Range.GetComponent<Projectile>().init(damage, count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);    
                 break;
             case "Bounding":
-                Range.GetComponent<Boundingweapon>().init(damage, count, dir);
+                Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback);
                 break;
             case "Dot":
-                Range.GetComponent<Projectile>().init(damage,count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir);
+                Range.GetComponent<Projectile>().init(damage,count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);
                 break;
             case "SequenceBullet":
-                Range.GetComponent<Bullet>().init(damage, 0, dir);
+                Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
                 break;
 
         }
 
     }
+
     Vector3 CalcuDistance(Vector3 dest)
     {
         if (dest == null)
@@ -208,8 +232,6 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         Vector3 dir = dest - transform.position;
         return dir.normalized;
     }
-
-    // Vector3 랜덤으로 나오는 함수도 제작 필요
 
     public void LevelUp(float damage, int count)
     {
@@ -250,7 +272,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
              
             //이동 방향이 Space.self가 아니라 World인 이유는? 이미 회전 후 위쪽 방향으로 1.5만큼 이동시키는 것으로 했으므로 이동 방향은 월드를 기준으로 설정
             bullet.Translate(bullet.up * 1.5f, Space.World);
-            bullet.GetComponent<RotationWeapon>().init(damage);
+            bullet.GetComponent<RotationWeapon>().init(damage,data.isKnockback);
         }
     }
     void SpawnLaser()
@@ -288,4 +310,15 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         Area.localRotation = Quaternion.identity;
         Area.GetComponent<SlowArea>().init(damage, count);
     }
+
+    IEnumerator SequenceShot() 
+    {
+        while(SequenceCount++ < count)
+        {
+            FireRange("SequenceBullet");
+            yield return new WaitForSeconds(0.08f);
+        }
+    }
+
+
 }

@@ -10,10 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 7509598047433215658}
   - component: {fileID: 1098648692647633778}
-  - component: {fileID: 1585295454024947288}
-  - component: {fileID: -1925792874332921396}
+  - component: {fileID: 8428283123348956354}
+  - component: {fileID: 6488858831040022714}
+  - component: {fileID: 7355842738995599586}
   m_Layer: 7
-  m_Name: Bullet 5
+  m_Name: Bullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
+  m_Sprite: {fileID: -537537479, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -89,7 +90,34 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &1585295454024947288
+--- !u!50 &8428283123348956354
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8462740780204974709}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!70 &6488858831040022714
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -123,10 +151,10 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.012670994, y: 0.007641524}
-  m_Size: {x: 0.52874184, y: 0.73919004}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.22222222, y: 0.44444445}
   m_Direction: 0
---- !u!114 &-1925792874332921396
+--- !u!114 &7355842738995599586
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,6 +163,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 8462740780204974709}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6ed3956185282f4d8dc066d7543bf45, type: 3}
+  m_Script: {fileID: 11500000, guid: 92cee04b8a4c0f847a0520ee628ea923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 0
+  per: 0

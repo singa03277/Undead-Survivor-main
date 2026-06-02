@@ -5,20 +5,23 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float damage;   //������
-    public int per;        //����
+    public float damage;   
+    public int per;        
     Rigidbody2D rigid;
+    private bool isKnockBack;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    public void init(float damage, int per, Vector3 dir)
+    public void init(float damage, int per, Vector3 dir, bool isKnockBack)
     {
         this.damage = damage; 
-        this.per = per;         
-        rigid.linearVelocity = dir * 15f; 
+        this.per = per;
+        this.isKnockBack = isKnockBack; 
+        rigid.linearVelocity = dir * 15f;
+        
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -29,7 +32,7 @@ public class Bullet : MonoBehaviour
         if (collision.CompareTag("Enemy"))
         {
             Enemy hitEnemy = collision.GetComponent<Enemy>();
-            hitEnemy.TakeDamage(damage, gameObject.tag);
+            hitEnemy.TakeDamage(damage, gameObject.tag, isKnockBack);
             per--;
         }
         if (per < 0) 

@@ -3,9 +3,11 @@ using UnityEngine;
 public class RotationWeapon : MonoBehaviour
 {
     public float damage;
-    public void init(float damage)
+    private bool isKnockBack;
+    public void init(float damage, bool isKnockBack)
     {
         this.damage = damage;
+        this.isKnockBack = isKnockBack;
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -13,6 +15,6 @@ public class RotationWeapon : MonoBehaviour
             return;
 
         Enemy hitEnemy = collision.GetComponent<Enemy>();
-        hitEnemy.TakeDamage(damage, gameObject.tag);
+        hitEnemy.TakeDamage(damage, gameObject.tag, isKnockBack);
     }
 }

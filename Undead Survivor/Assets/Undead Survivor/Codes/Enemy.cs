@@ -11,19 +11,16 @@ public class Enemy : MonoBehaviour
     public float maxHealth;     //�ִ� ü��
     public RuntimeAnimatorController[] animCon;     //������ �ִϸ����͸� �ٲٱ� ���� ��Ʈ�ѷ�
     public Rigidbody2D target; 
-    private float dotTimer = 0f;
     bool isLive;
     private bool isDot = false;
-    private float DotTimer = 0f;
-    private float DotDamage = 0f;
     private bool isSlow = false;
 
     Rigidbody2D rigid;
-    Collider2D coll;
+    Collider2D coll;    
     Animator anim;
     SpriteRenderer spriter;
     WaitForFixedUpdate wait;
-    Item item;
+    Dot DotArea;
 
     void Awake()
     {
@@ -85,14 +82,14 @@ public class Enemy : MonoBehaviour
         calcuspeed = speed;
     }
 
-    public void TakeDamage(float damage,string type) //해당 함수로 변경 : 기타 무기와 호환을 위해서 collision -> 함수로 대체 (무기 타입에 따라서 knockback 함수 실행예정)
+    public void TakeDamage(float damage,string type, bool isKnockBack) //해당 함수로 변경 : 기타 무기와 호환을 위해서 collision -> 함수로 대체 (무기 타입에 따라서 knockback 함수 실행예정)
     {
         health -= damage;
         if (health > 0)
         {
             anim.SetTrigger("Hit");
             AudioManager.instance.PlaySfx(AudioManager.Sfx.Hit);
-            if (type == "Bomb" || type == "Bullet")
+            if (isKnockBack)
             {
                 StartCoroutine(KnockBack());
             }
@@ -123,14 +120,13 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    IEnumerator DotRoroutine()
+    IEnumerator DotCoroutine()
     {
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            TakeDamage(3, "Dot"); //임시로 한것 데미지 아이템 데이터에서 받아오도록
-        }
-        
+            TakeDamage(DotArea.damage, "Dot",DotArea.isKnockBack); 
+        }  
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -143,7 +139,9 @@ public class Enemy : MonoBehaviour
         }
         else if (collision.CompareTag("Dot"))
         {
-            StartCoroutine("DotRoroutine");
+            isDot = true;
+            DotArea = collision.GetComponent<Dot>();
+            StartCoroutine("DotCoroutine");
         }
     }
     void OnTriggerExit2D(Collider2D collision)
@@ -154,7 +152,8 @@ public class Enemy : MonoBehaviour
             calcuspeed = speed;
         }
         else if(collision.CompareTag("Dot")){
-            StopCoroutine("DotRoroutine");
+            isDot = false;
+            StopCoroutine("DotCoroutine");
         }
     }
 }

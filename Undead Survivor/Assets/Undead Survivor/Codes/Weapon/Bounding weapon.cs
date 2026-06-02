@@ -5,6 +5,7 @@ public class Boundingweapon : MonoBehaviour
 {
     private float damage;
     private float bounceCount;
+    private bool isKnockBack;
     private Rigidbody2D rb;
     
     private void Awake()
@@ -12,10 +13,11 @@ public class Boundingweapon : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void init(float damage, float boundCount,Vector3 dir)
+    public void init(float damage, float boundCount,Vector3 dir, bool isKnockBack)
     {
         this.damage= damage;
         this.bounceCount= boundCount;
+        this.isKnockBack= isKnockBack;
         rb.linearVelocity = dir * 15f;
         
     }
@@ -43,7 +45,7 @@ public class Boundingweapon : MonoBehaviour
         else if (collision.CompareTag("Enemy"))
         {
             Enemy hitEnemy = collision.GetComponent<Enemy>();
-            hitEnemy.TakeDamage(damage, gameObject.tag);
+            hitEnemy.TakeDamage(damage, gameObject.tag, isKnockBack);
         }
     }
 
