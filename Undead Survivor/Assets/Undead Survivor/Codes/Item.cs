@@ -66,7 +66,6 @@ public class Item : MonoBehaviour
                     //AddComponent 함수 반환 값을 미리 선언한 변수에 저장.
                     weapon = newWeapon.AddComponent<Weapon>();
                     weapon.Init(data);
-
                 }
                 else
                 {

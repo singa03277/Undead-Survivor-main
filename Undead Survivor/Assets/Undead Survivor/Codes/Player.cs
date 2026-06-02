@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     {
         if (!GameManager.Instance.isLive)
             return;
-
+        
         Vector2 nextVec = inputVec * speed * Time.fixedDeltaTime;
         rigid.MovePosition(rigid.position + nextVec);
     }
@@ -62,8 +62,11 @@ public class Player : MonoBehaviour
         if (!GameManager.Instance.isLive) //살아있을때만 실행
             return;
 
-        // 프레임마다 이벤트가 실행되기 때문에 DeltaTime을 곱해주어야 한다.
-        GameManager.Instance.health -= Time.deltaTime * 10;
+        if (!collision.gameObject.CompareTag("Screen"))
+        {
+            GameManager.Instance.health -= Time.deltaTime * 10;
+        }
+        
 
         if(GameManager.Instance.health < 0)
         {

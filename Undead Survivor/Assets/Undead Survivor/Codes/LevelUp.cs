@@ -36,7 +36,6 @@ public class LevelUp : MonoBehaviour
     public void Select(int index)
     {
         items[index].OnClick();
-   
     }
 
     void Next()
