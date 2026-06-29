@@ -15,6 +15,8 @@ MonoBehaviour:
   itemType: 1
   itemId: 8
   itemName: "\uC804\uBC29 \uACF5\uACA9"
+  isRandomPlace: 0
+  isKnockback: 1
   itemDesc: "\uB370\uBBF8\uC9C0 {0}% \uC99D\uAC00\n\uACF5\uACA9 \uBC18\uACBD {1}%\uBA04\uD07C
     \uC99D\uAC00"
   itemIcon: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: ASGlove
   m_EditorClassIdentifier: 
   itemType: 2
-  itemId: 9
+  itemId: 12
   itemName: "\uD14C\uD06C\uB2C8\uCEEC \uC7A5\uAC11"
+  isRandomPlace: 0
   isKnockback: 0
   itemDesc: "\uC5F0\uC0AC\uC18D\uB3C4 {0}% \uC99D\uAC00"
   itemIcon: {fileID: -201829820, guid: d71a3dc7aa20fad4f9a99fc76a9254ba, type: 3}

@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
+
 
 public class Enemy : MonoBehaviour
 {
@@ -14,13 +16,14 @@ public class Enemy : MonoBehaviour
     bool isLive;
     private bool isDot = false;
     private bool isSlow = false;
+    Coroutine Projectile;
+    Coroutine BackDot;
 
     Rigidbody2D rigid;
     Collider2D coll;    
     Animator anim;
     SpriteRenderer spriter;
     WaitForFixedUpdate wait;
-    Dot DotArea;
 
     void Awake()
     {
@@ -35,11 +38,6 @@ public class Enemy : MonoBehaviour
     {
         if (!GameManager.Instance.isLive)
             return;
-
-        if (isDot)
-        {
-            StartCoroutine("DotRoutine");
-        }
 
         if (!isLive || anim.GetCurrentAnimatorStateInfo(0).IsName("Hit")) //�׾����� ����
             return;
@@ -120,12 +118,12 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    IEnumerator DotCoroutine()
+    IEnumerator DotCoroutine(Dot dot)
     {
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            TakeDamage(DotArea.damage, "Dot",DotArea.isKnockBack); 
+            TakeDamage(dot.damage, "Dot", dot.isKnockBack); 
         }  
     }
 
@@ -137,11 +135,13 @@ public class Enemy : MonoBehaviour
             calcuspeed = speed * ((100f - collision.GetComponent<SlowArea>().slowPer)/100f);
             
         }
-        else if (collision.CompareTag("Dot"))
+        else if (collision.CompareTag("ProjectileDot"))
         {
-            isDot = true;
-            DotArea = collision.GetComponent<Dot>();
-            StartCoroutine("DotCoroutine");
+            statusAdd(1,collision.GetComponent<Dot>());
+        }
+        else if (collision.CompareTag("BackDot"))
+        {
+            statusAdd(2, collision.GetComponent<Dot>());
         }
     }
     void OnTriggerExit2D(Collider2D collision)
@@ -151,12 +151,50 @@ public class Enemy : MonoBehaviour
             isSlow = false;
             calcuspeed = speed;
         }
-        else if(collision.CompareTag("Dot")){
-            isDot = false;
-            StopCoroutine("DotCoroutine");
+
+        else if (collision.CompareTag("ProjectileDot"))
+        {
+            statusSub(1);
+        }
+        else if (collision.CompareTag("BackDot"))
+        {
+            statusSub(2);
         }
     }
+    void statusAdd(int newStatus, Dot dot)
+    {
+        switch (newStatus)
+        {
+            case 1:
+                if(Projectile == null)
+                    Projectile = StartCoroutine(DotCoroutine(dot));
+                break;
+            case 2:
+                if(BackDot == null)
+                    BackDot = StartCoroutine(DotCoroutine(dot));
+                break;
+        }
+    }
+    void statusSub(int subStatus)
+    {
+        switch (subStatus)
+        {
+            case 1:
+                if(Projectile != null)
+                {
+                    StopCoroutine(Projectile);
+                    Projectile = null;
+                }
+                break;
+            case 2:
+                if(BackDot != null)
+                {
+                    StopCoroutine(BackDot);
+                    BackDot = null;
+                }
+                break;
+        }
+    }
+
 }
 
-//무기 다 만들고 할일 : 함수 리팩토링(itemdata와 연결해서 조금 더 유연하게 코드를 짠다. - 아이템 무기 유형 등으로 계산해서 바로 가져오기 가능하게 시도), 그리고 데이터에 넉백여부도 확인해서 거기에 맞춰서 넉백 넣기
-//0514 재수정 - 게임씬에서 weapon 클래스로 존재하는데 해당 클래스에 id를 통해서 아이템 데이터에 대한 정보를 남김 - 
