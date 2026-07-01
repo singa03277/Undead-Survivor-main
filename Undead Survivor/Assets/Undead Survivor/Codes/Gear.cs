@@ -44,7 +44,6 @@ public class Gear : MonoBehaviour
     {
         // 부모로 올라가서 자식들의 Weapon 컴포넌트들을 다 가져온다.
         Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-
         //무기 하나씩 순회하면서 타입에 따라 speed 값 변경
         foreach(Weapon weapon in weapons)
         {
@@ -55,8 +54,7 @@ public class Gear : MonoBehaviour
                     weapon.speed = speed + (speed * rate); // 회전 속도를 증가
                     break;
                 default: //원거리 무기의 경우
-                    speed = 0.3f * Character.WeaponRate; //해당 부분 수정 필요(여기서 발사체의 speed가 비정상적으로 빨라지는 문제 발견)
-                    weapon.speed = speed * (1f - rate);  // 발사 주기를 감소
+                    weapon.speed = weapon.speed * (1f - rate);  // 무조건 공격속도 테이블에서는 소수점으로 줘야함 - 그러지 않으면 -로 넘어가게 됨. 
                     break;
             }
 
