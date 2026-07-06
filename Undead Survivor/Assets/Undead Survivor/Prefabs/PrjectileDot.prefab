@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 1585295454024947288}
   - component: {fileID: -9047628466979566439}
   m_Layer: 7
-  m_Name: DotArea
-  m_TagString: Dot
+  m_Name: PrjectileDot
+  m_TagString: ProjectileDot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -139,3 +139,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 0
+  isKnockBack: 0

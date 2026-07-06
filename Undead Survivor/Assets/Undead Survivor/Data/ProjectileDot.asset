@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6759877453d1fc548bf723113688761c, type: 3}
-  m_Name: DotArea
+  m_Name: ProjectileDot
   m_EditorClassIdentifier: 
   itemType: 1
   itemId: 2

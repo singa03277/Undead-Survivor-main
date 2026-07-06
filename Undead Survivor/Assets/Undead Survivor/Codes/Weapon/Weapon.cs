@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ µû¶ó¼­ ´Ù¸¥ ÀÛµ¿À» º¸¿©ÁØ´Ù)
+public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ idï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½Ûµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½)
 {
     public int id;
     public int prefabId;
@@ -15,7 +15,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
     private bool isRandom = false;
     private bool isShoot = false;
     private float SequenceCount;
-    private bool isEvolved = false; //ÁøÈ­ ¹«±â¿¡ »ç¿ëº¯¼ö - ½ºÅ©¸³Æ® ¿ÀºêÁ§Æ®¸¦ ¹«±â Å¬·¡½º¿¡ ³Ö¾î¼­ ºñ±³¸¦ ÇØ¼­ »ç¿ë¿¹Á¤
+    private bool isEvolved = false; //ï¿½ï¿½È­ ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ëº¯ï¿½ï¿½ - ï¿½ï¿½Å©ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ñ±³¸ï¿½ ï¿½Ø¼ï¿½ ï¿½ï¿½ë¿¹ï¿½ï¿½
     public float timer;
     Player player;
     ItemData data;
@@ -48,10 +48,8 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
                 timer += Time.deltaTime;
                 if (timer > speed)
                 {
-                    Debug.Log(timer);
                     timer = 0;
                     FireRange("Dot");
-                    Debug.Log("¹ß»ç");
                 }
                 break;
             case 3:
@@ -107,7 +105,14 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
             case 8:
                 timer += Time.deltaTime;
                 break;
- 
+            case 9:
+                timer += Time.deltaTime;
+                if(timer > speed)
+                {
+                    timer = 0;
+                    SpawnBackDot();
+                }
+                break;
             default:
                 break;
 
@@ -122,9 +127,9 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
     public void Init(ItemData data)
     {
         this.data = data;
-        name = "Weapon " + data.itemId; //ÀÌ¸§ ¼³Á¤
-        transform.parent = player.transform; //ºÎ¸ð ¿ÀºêÁ§Æ® ¼³Á¤
-        //ÇÃ·¹ÀÌ¾î ¾È¿¡¼­ À§Ä¡¸¦ 0, 0, 0À¸·Î ¸ÂÃß±â ¶§¹®¿¡ LocalPostion »ç¿ë
+        name = "Weapon " + data.itemId; //ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+        transform.parent = player.transform; //ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+        //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½È¿ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ 0, 0, 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ LocalPostion ï¿½ï¿½ï¿½
         transform.localPosition = Vector3.zero;
 
         //Property Set
@@ -136,7 +141,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
 
         for (int i = 0; i < GameManager.Instance.pool.prefabs.Length; i++)
         {
-            //ÇÁ¸®ÆÕ ¾ÆÀÌµð´Â Ç®¸µ ¸Å´ÏÀúÀÇ º¯¼ö¿¡¼­ Ã£¾Æ¼­ ÃÊ±âÈ­
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ï¿½ Ç®ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½Ê±ï¿½È­
 
             if (data.projectile == GameManager.Instance.pool.prefabs[i])
             {
@@ -145,11 +150,11 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
             }
         }
 
-        //¹«±â id¿¡ ¸Â°Ô ¹«±â ¼Ó¼ºÀ» ¼³Á¤
+        //ï¿½ï¿½ï¿½ï¿½ idï¿½ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         switch (id)
         {
             case 0:
-                speed = 150 * Character.WeaponSpeed;   //¸¶ÀÌ³Ê½º = ½Ã°è¹æÇâ
+                speed = 150 * Character.WeaponSpeed;   //ï¿½ï¿½ï¿½Ì³Ê½ï¿½ = ï¿½Ã°ï¿½ï¿½ï¿½ï¿½
                 Batch();
                 break;
             case 1:
@@ -179,19 +184,22 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
                 speed = 10 * Character.WeaponRate;
                 SpawnFront();
                 break;
+            case 9:
+                speed = 5f * Character.WeaponRate;
+                break;
             default:
                 break;
         }
-        Hand hand = player.hands[(int)data.itemType]; //¾ÆÀÌÅÛ Å¸ÀÔ¿¡ ¸Â´Â ÇÚµå¸¦ ¾ÆÀÌÅÛÀ» hand¿¡ ¿¬°á
-        hand.spriter.sprite = data.hand; //Ãß°¡ÇØ³ù´ø hand sprite¸¦ Àû¿ë
+        Hand hand = player.hands[(int)data.itemType]; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ô¿ï¿½ ï¿½Â´ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ handï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        hand.spriter.sprite = data.hand; //ï¿½ß°ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ hand spriteï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         hand.gameObject.SetActive(true);
 
-        //WeaponÀÌ »õ·Ó°Ô Ãß°¡µÇ¸é ApplyGear·Î »õ·Ó°Ô Ãß°¡µÈ ¹«±â¿¡ Gear ·¹º§À» Àû¿ë
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //ÇÃ·¹ÀÌ¾î¿¡°Ô broadcastÇØÁÖµµ·Ï ºÎÅ¹
+        //Weaponï¿½ï¿½ ï¿½ï¿½ï¿½Ó°ï¿½ ï¿½ß°ï¿½ï¿½Ç¸ï¿½ ApplyGearï¿½ï¿½ ï¿½ï¿½ï¿½Ó°ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ Gear ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ broadcastï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½Å¹
 
     }
 
-    void FireRange(string name) // ¿ø°Å¸® ¹ß»ç¿¡ ´ëÇÑ ÇÔ¼ö
+    void FireRange(string name) // ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ß»ç¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     {
         Vector3 dir;
         if (isRandom)
@@ -228,6 +236,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
                 break;
+            
 
         }
 
@@ -242,7 +251,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
         return dir.normalized;
     }
 
-    public void LevelUp(float damage, int count) //¿ø°Å¸® ¹ß»çÃ¼°¡ ¾Æ´Ñ°ÍÀº Ãß°¡ÀûÀÎ ÇÔ¼ö Àû¿ë ÇÊ¿ä(spawn --- ÇÔ¼öµé ¼öÁ¤ÇÊ¿ä)
+    public void LevelUp(float damage, int count) //ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½Æ´Ñ°ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½(spawn --- ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê¿ï¿½)
     {
         this.damage = damage * Character.Damage;
         this.count += count;
@@ -250,36 +259,36 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
         if (id == 0)
             Batch();
 
-        //WeaponÀÌ ·¹º§¾÷ÇÏ¸é ApplyGear·Î ·¹º§¾÷ÇÑ ¹«±â¿¡ Gear ·¹º§À» Àû¿ë
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //ÇÃ·¹ÀÌ¾î¿¡°Ô broadcastÇØÁÖµµ·Ï ºÎÅ¹
-        //ÇÃ·¹ÀÌ¾î°¡ °¡Áö°í ÀÖ´Â ¸ðµç Gear¿¡ ÇÑÇØ¼­ ApplyGear°¡ ½ÇÇà
+        //Weaponï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ApplyGearï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ Gear ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ broadcastï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½Å¹
+        //ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ Gearï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ApplyGearï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
-    void Batch()// »ý¼ºµÈ ¹«±â¸¦ ¹èÄ¡ÇÏ´Â ÇÔ¼ö
+    void Batch()// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½Ä¡ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     {
         for (int i = 0; i < count; i++)
         {
 
             Transform bullet;
             
-            // ±âÁ¸ ¿ÀºêÁ§Æ®¸¦ ¸ÕÀú È°¿ëÇÏ°í ¸ðÀÚ¶õ °ÍÀº Ç®¸µ¿¡¼­ °¡Á®¿À±â
-            if (i < transform.childCount) // ÀÚ½ÄÀ» °¡Áö°í ÀÖÀ¸¸é »õ·Î ²¨³»Áö ¾Ê°í
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ú¶ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            if (i < transform.childCount) // ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½
             {
-                bullet = transform.GetChild(i);  //±âÁ¸ÀÇ ÀÚ½ÄµéÀ» °¡Á®´Ù ¾´´Ù.
+                bullet = transform.GetChild(i);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½Äµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
             }
             else
             {
                 bullet = GameManager.Instance.pool.Get(prefabId).transform;
-                bullet.parent = transform;  //»õ·Î °¡Á®¿À´Â °Íµé¸¸ parent¸¦ ¼³Á¤ÇØÁÖ¸é µÈ´Ù. 
+                bullet.parent = transform;  //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Íµé¸¸ parentï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½È´ï¿½. 
             }
 
             bullet.localPosition = Vector3.zero;
             bullet.localRotation = Quaternion.identity;
 
-            Vector3 rotVec = Vector3.forward * 360 * i / count; //i¹øÂ° ¹«±âÀÇ È¸Àü °¢µµ¸¦ °è»ê
-            bullet.Rotate(rotVec);                              //rotVec¸¸Å­ È¸Àü
+            Vector3 rotVec = Vector3.forward * 360 * i / count; //iï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+            bullet.Rotate(rotVec);                              //rotVecï¿½ï¿½Å­ È¸ï¿½ï¿½
              
-            //ÀÌµ¿ ¹æÇâÀÌ Space.self°¡ ¾Æ´Ï¶ó WorldÀÎ ÀÌÀ¯´Â? ÀÌ¹Ì È¸Àü ÈÄ À§ÂÊ ¹æÇâÀ¸·Î 1.5¸¸Å­ ÀÌµ¿½ÃÅ°´Â °ÍÀ¸·Î ÇßÀ¸¹Ç·Î ÀÌµ¿ ¹æÇâÀº ¿ùµå¸¦ ±âÁØÀ¸·Î ¼³Á¤
+            //ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Space.selfï¿½ï¿½ ï¿½Æ´Ï¶ï¿½ Worldï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½? ï¿½Ì¹ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1.5ï¿½ï¿½Å­ ï¿½Ìµï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             bullet.Translate(bullet.up * 1.5f, Space.World);
             bullet.GetComponent<RotationWeapon>().init(damage,data.isKnockback);
         }
@@ -326,6 +335,15 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
         Area.GetComponent<SlowArea>().init(damage, count,isEvolved);
     }
 
+    void SpawnBackDot()
+    {
+        Transform Dot = GameManager.Instance.pool.Get(prefabId).transform;
+
+        Dot.position = transform.position;
+        Dot.rotation = Quaternion.identity;
+        Dot.GetComponent<Dot>().init(damage, count, data.isKnockback);
+    }
+
     IEnumerator SequenceShot() 
     {
         while(SequenceCount++ < count)
@@ -335,7 +353,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
         }
     }
 
-    void EvolveAttack(int prefabId) //¾ÆÀÌµð ½ºÀ§Ä¡ÇØ¼­ ¼±ÅÃÇÒ¿¹Á¤
+    void EvolveAttack(int prefabId) //ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¿ï¿½ï¿½ï¿½
     {
         switch (prefabId)
         {
@@ -350,4 +368,4 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
 
 }
 
-// ÁøÈ­ µ¥ÀÌÅÍ¸¦ ¾î¶»°Ô ¾ò¾î ¿À³Ä? -> evolveµ¥ÀÌÅÍ¸¦ ¾ÆÀÌÅÛ µ¥ÀÌÅÍ¿¡ ³Ö´Â´Ù. ±×¸®°í ÁøÈ­¸¦ ±×°ÍÀ» ¹Þ¾Æ¿Í¼­ ½ºÅÈ ¹Ý¿µÇÏ±â
+// ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½î¶»ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½? -> evolveï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½Ö´Â´ï¿½. ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ ï¿½×°ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿Í¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½ï¿½Ï±ï¿½

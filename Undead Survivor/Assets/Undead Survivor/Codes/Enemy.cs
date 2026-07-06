@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
+
 
 public class Enemy : MonoBehaviour
 {
@@ -14,13 +16,14 @@ public class Enemy : MonoBehaviour
     bool isLive;
     private bool isDot = false;
     private bool isSlow = false;
+    Coroutine Projectile;
+    Coroutine BackDot;
 
     Rigidbody2D rigid;
     Collider2D coll;    
     Animator anim;
     SpriteRenderer spriter;
     WaitForFixedUpdate wait;
-    Dot DotArea;
 
     void Awake()
     {
@@ -35,11 +38,6 @@ public class Enemy : MonoBehaviour
     {
         if (!GameManager.Instance.isLive)
             return;
-
-        if (isDot)
-        {
-            StartCoroutine("DotRoutine");
-        }
 
         if (!isLive || anim.GetCurrentAnimatorStateInfo(0).IsName("Hit")) //ï¿½×¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             return;
@@ -82,7 +80,7 @@ public class Enemy : MonoBehaviour
         calcuspeed = speed;
     }
 
-    public void TakeDamage(float damage,string type, bool isKnockBack) //?´ë‹¹ ?¨ìˆ˜ë¡?ë³€ê²?: ê¸°í? ë¬´ê¸°?€ ?¸í™˜???„í•´??collision -> ?¨ìˆ˜ë¡??€ì²?(ë¬´ê¸° ?€?…ì— ?°ë¼??knockback ?¨ìˆ˜ ?¤í–‰?ˆì •)
+    public void TakeDamage(float damage,string type, bool isKnockBack) //?ï¿½ë‹¹ ?ï¿½ìˆ˜ï¿½?ë³€ï¿½?: ê¸°ï¿½? ë¬´ê¸°?ï¿½ ?ï¿½í™˜???ï¿½í•´??collision -> ?ï¿½ìˆ˜ï¿½??ï¿½ï¿½?(ë¬´ê¸° ?ï¿½?ï¿½ì— ?ï¿½ë¼??knockback ?ï¿½ìˆ˜ ?ï¿½í–‰?ï¿½ì •)
     {
         health -= damage;
         if (health > 0)
@@ -120,12 +118,12 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    IEnumerator DotCoroutine()
+    IEnumerator DotCoroutine(Dot dot)
     {
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            TakeDamage(DotArea.damage, "Dot",DotArea.isKnockBack); 
+            TakeDamage(dot.damage, "Dot", dot.isKnockBack); 
         }  
     }
 
@@ -137,11 +135,13 @@ public class Enemy : MonoBehaviour
             calcuspeed = speed * ((100f - collision.GetComponent<SlowArea>().slowPer)/100f);
             
         }
-        else if (collision.CompareTag("Dot"))
+        else if (collision.CompareTag("ProjectileDot"))
         {
-            isDot = true;
-            DotArea = collision.GetComponent<Dot>();
-            StartCoroutine("DotCoroutine");
+            statusAdd(1,collision.GetComponent<Dot>());
+        }
+        else if (collision.CompareTag("BackDot"))
+        {
+            statusAdd(2, collision.GetComponent<Dot>());
         }
     }
     void OnTriggerExit2D(Collider2D collision)
@@ -151,13 +151,15 @@ public class Enemy : MonoBehaviour
             isSlow = false;
             calcuspeed = speed;
         }
-        else if(collision.CompareTag("Dot")){
-            isDot = false;
-            StopCoroutine("DotCoroutine");
+
+        else if (collision.CompareTag("ProjectileDot"))
+        {
+            statusSub(1);
+        }
+        else if (collision.CompareTag("BackDot"))
+        {
+            statusSub(2);
         }
     }
-
     
 }
-
-//status???€??flags?¤ì‹œ ?œìž‘?´ë³´ê¸
