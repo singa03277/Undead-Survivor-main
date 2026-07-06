@@ -47,10 +47,8 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 timer += Time.deltaTime;
                 if (timer > speed)
                 {
-                    Debug.Log(timer);
                     timer = 0;
                     FireRange("Dot");
-                    Debug.Log("발사");
                 }
                 break;
             case 3:
@@ -96,9 +94,15 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 break;
             case 8:
                 timer += Time.deltaTime;
-            
                 break;
- 
+            case 9:
+                timer += Time.deltaTime;
+                if(timer > speed)
+                {
+                    timer = 0;
+                    SpawnBackDot();
+                }
+                break;
             default:
                 break;
 
@@ -170,6 +174,9 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 speed = 10 * Character.WeaponRate;
                 SpawnFront();
                 break;
+            case 9:
+                speed = 5f * Character.WeaponRate;
+                break;
             default:
                 break;
         }
@@ -219,6 +226,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
                 break;
+            
 
         }
 
@@ -311,6 +319,15 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         Area.GetComponent<SlowArea>().init(damage, count);
     }
 
+    void SpawnBackDot()
+    {
+        Transform Dot = GameManager.Instance.pool.Get(prefabId).transform;
+
+        Dot.position = transform.position;
+        Dot.rotation = Quaternion.identity;
+        Dot.GetComponent<Dot>().init(damage, count, data.isKnockback);
+    }
+
     IEnumerator SequenceShot() 
     {
         while(SequenceCount++ < count)
@@ -319,6 +336,4 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
             yield return new WaitForSeconds(0.08f);
         }
     }
-
-
 }
