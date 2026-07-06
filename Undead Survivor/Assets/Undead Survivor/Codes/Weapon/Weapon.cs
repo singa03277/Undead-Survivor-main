@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//튕기는 무기 현재 튕기는 로직 및 기타 호환 문제로 뒤로 미룬상태
+
 public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 따라서 다른 작동을 보여준다)
 {
     public int id;
@@ -15,7 +15,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
     private bool isRandom = false;
     private bool isShoot = false;
     private float SequenceCount;
-    private bool isEvolve = false; //진화 무기 개발 시 사용될 변수
+    private bool isEvolved = false; //진화 무기에 사용변수 - 스크립트 오브젝트를 무기 클래스에 넣어서 비교를 해서 사용예정
     public float timer;
     Player player;
     ItemData data;
@@ -29,6 +29,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         if (!GameManager.Instance.isLive)
             return;
 
+        
         switch (id)
         {
             case 0:
@@ -58,19 +59,28 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 break;
             case 4:
                 timer += Time.deltaTime;
-                if(timer > speed && isShoot == false)
+                if (isEvolved)
                 {
-                    timer = 0;
-                    isShoot= true;
-                    StartCoroutine("SequenceShot");
-                    
+                    if(timer > speed)
+                        FireRange("Bullet");
                 }
-                if(SequenceCount == count)
+                else if(!isEvolved)
                 {
-                    SequenceCount = 0;
-                    isShoot= false;
-                    StopCoroutine("SequenceShot");
+                    if (timer > speed && isShoot == false)
+                    {
+                        timer = 0;
+                        isShoot = true;
+                        StartCoroutine("SequenceShot");
+
+                    }
+                    if (SequenceCount == count)
+                    {
+                        SequenceCount = 0;
+                        isShoot = false;
+                        StopCoroutine("SequenceShot");
+                    }
                 }
+
                 break;
             case 5:
                 timer += Time.deltaTime;
@@ -96,7 +106,6 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 break;
             case 8:
                 timer += Time.deltaTime;
-            
                 break;
  
             default:
@@ -182,7 +191,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
 
     }
 
-    void FireRange(string name) //진화 여부에 따라서도 분류할예정
+    void FireRange(string name) // 원거리 발사에 대한 함수
     {
         Vector3 dir;
         if (isRandom)
@@ -211,7 +220,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
                 Range.GetComponent<Projectile>().init(damage, count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);    
                 break;
             case "Bounding":
-                Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback);
+                Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback, false);
                 break;
             case "Dot":
                 Range.GetComponent<Projectile>().init(damage,count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);
@@ -233,12 +242,12 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         return dir.normalized;
     }
 
-    public void LevelUp(float damage, int count)
+    public void LevelUp(float damage, int count) //원거리 발사체가 아닌것은 추가적인 함수 적용 필요(spawn --- 함수들 수정필요)
     {
         this.damage = damage * Character.Damage;
         this.count += count;
 
-        if (id == 0) //id가 0이면 재배치
+        if (id == 0)
             Batch();
 
         //Weapon이 레벨업하면 ApplyGear로 레벨업한 무기에 Gear 레벨을 적용
@@ -284,7 +293,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         Laser.localPosition = Vector3.zero;
         Laser.localRotation = Quaternion.identity;
 
-        Laser.GetComponent<Laser>().init(damage,count);
+        Laser.GetComponent<Laser>().init(damage,count,isEvolved);
     }
 
     void SpawnFront()
@@ -296,7 +305,13 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         Front.localPosition = Vector3.zero;
         Front.localRotation = Quaternion.identity;
 
-        Front.GetComponent<FrontAttack>().init(damage);
+        if (isEvolved) 
+        {
+            Front.GetComponent<FrontAttack>().init(damage, true);
+            return;
+        }
+        else
+            Front.GetComponent<FrontAttack>().init(damage, false);
     }
     
     void SpawnArea()
@@ -308,7 +323,7 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
 
         Area.localPosition = Vector3.zero;
         Area.localRotation = Quaternion.identity;
-        Area.GetComponent<SlowArea>().init(damage, count);
+        Area.GetComponent<SlowArea>().init(damage, count,isEvolved);
     }
 
     IEnumerator SequenceShot() 
@@ -316,9 +331,23 @@ public class Weapon : MonoBehaviour //무기 각각에 들어가는 스크립트(무기의 id에 
         while(SequenceCount++ < count)
         {
             FireRange("SequenceBullet");
-            yield return new WaitForSeconds(0.08f);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
+    void EvolveAttack(int prefabId) //아이디 스위치해서 선택할예정
+    {
+        switch (prefabId)
+        {
+            case 4:
+
+                StartCoroutine(SequenceShot());
+                break;
+        default:
+                break;
+        }
+    }
 
 }
+
+// 진화 데이터를 어떻게 얻어 오냐? -> evolve데이터를 아이템 데이터에 넣는다. 그리고 진화를 그것을 받아와서 스탯 반영하기

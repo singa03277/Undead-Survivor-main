@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Boomerang : MonoBehaviour
@@ -8,6 +9,7 @@ public class Boomerang : MonoBehaviour
     private Vector3 dir;
     private bool isKnockBack;
     Rigidbody2D rigid;
+    private bool isEvolve = false;
 
     private void Awake()
     {
@@ -27,9 +29,12 @@ public class Boomerang : MonoBehaviour
         this.damage = damage;
         this.accelerate = accelerate;
         this.dir = dir;
-        this.isKnockBack = isKnockBack;
         hit = false;
         rigid.linearVelocity = dir * 10f;
+        if (isKnockBack) 
+        {
+            StartCoroutine(increaseSizeRoutine());
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -50,5 +55,15 @@ public class Boomerang : MonoBehaviour
             return;
 
         gameObject.SetActive(false);
+    }
+
+    IEnumerator increaseSizeRoutine()
+    {
+        float increase = 0.1f;
+        while (true)
+        {
+            gameObject.transform.localScale += Vector3.one * increase * Time.deltaTime;
+            yield return null;
+        }
     }
 }

@@ -8,13 +8,15 @@ public class FrontAttack : MonoBehaviour
     private float RotateTime = 0.333f;
     private float RotateTimer = 0f;
     private bool IsAttack = false;
+    private bool isRight = false;
     private Player play;
     private Vector2 PlayerDir;
     private Vector3 Offset;
     private Vector3 StartAngle;
-    public void init(float damage)
+    public void init(float damage, bool isRight)
     {
         this.damage = damage;
+        this.isRight = isRight;
     }
     private void Awake()
     {
@@ -39,79 +41,36 @@ public class FrontAttack : MonoBehaviour
         }
         else
         {
-            transform.RotateAround(play.transform.position, Vector3.back, 180 * Time.deltaTime);
-            transform.Rotate(Vector3.forward, -180 * Time.deltaTime);
+            if (!isRight)
+            {
+                transform.RotateAround(play.transform.position, Vector3.back, 180 * Time.deltaTime);
+                transform.Rotate(Vector3.forward, -180 * Time.deltaTime);
+            }
+            else
+            {
+                transform.RotateAround(play.transform.position, Vector3.back, -180 * Time.deltaTime);
+                transform.Rotate(Vector3.forward, 180 * Time.deltaTime);
+            }
+
             RotateTimer += Time.deltaTime;
             if (RotateTimer > RotateTime)
             {
                 RotateTimer = 0f;
                 IsAttack = false;
-                
             }
         }
-
     }
 
 
     void AttackDir()
     {
-        if (PlayerDir.x == 0)
-        {
-            if (PlayerDir.y == 1)
-            {
-                Offset = Quaternion.Euler(0, 0, 120) * Vector3.right * 3f;
-                StartAngle = new Vector3(0, 0, 300);
-            }
-            else if (PlayerDir.y == -1)
-            {
-                Offset = Quaternion.Euler(0, 0, -60) * Vector3.right * 3f;
-                StartAngle = new Vector3(0, 0, 120);
-            }
-        }
-        else if (PlayerDir.y == 0)
-        {
-            if (PlayerDir.x == 1)
-            {
-                Offset = Quaternion.Euler(0, 0, 30) * Vector3.right * 3f;
-                StartAngle = new Vector3(0, 0, 210);
-            }
-            else
-            {
-                Offset = Quaternion.Euler(0, 0, 210) * Vector3.right * 3f;
-                StartAngle = new Vector3(0, 0, 30);
-            }
-        }
-        else
-        {
-            if (PlayerDir.x > 0)
-            {
-                if (PlayerDir.y > 0)
-                {
-                    Offset = Quaternion.Euler(0, 0, 75) * Vector3.right * 3f;
-                    StartAngle = new Vector3(0, 0, 225);
-                }
-                else
-                {
-                    Offset = Quaternion.Euler(0, 0, 345) * Vector3.right * 3f;
-                    StartAngle = new Vector3(0, 0, 165);
-                }
-            }
-            else
-            {
-                if (PlayerDir.y > 0)
-                {
-                    Offset = Quaternion.Euler(0, 0, 165) * Vector3.right * 3f;
-                    StartAngle = new Vector3(0, 0, 345);
-                }
-                else
-                {
-                    Offset = Quaternion.Euler(0, 0, 255) * Vector3.right * 3f;
-                    StartAngle = new Vector3(0, 0, 75);
-                }
-            }
-        }
-        transform.Rotate(StartAngle);
-        transform.position = transform.parent.position + Offset;
+        float angle = Mathf.Atan2(PlayerDir.y, PlayerDir.x) * Mathf.Rad2Deg;
+        float startOffset = -30f;
+
+        float weaponAngle = isRight ? angle + startOffset : angle - startOffset;
+
+        Offset = Quaternion.Euler(0, 0, weaponAngle) * Vector3.right * 3f;
+        transform.position = play.transform.position + Offset;
     }
 }
 

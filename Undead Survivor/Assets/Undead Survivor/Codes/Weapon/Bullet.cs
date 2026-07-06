@@ -43,7 +43,6 @@ public class Bullet : MonoBehaviour
     }
 
 
-
     void OnTriggerExit2D(Collider2D collision)
     {
         if (!collision.CompareTag("Area") || per == -100)

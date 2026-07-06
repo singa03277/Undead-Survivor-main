@@ -82,7 +82,7 @@ public class Enemy : MonoBehaviour
         calcuspeed = speed;
     }
 
-    public void TakeDamage(float damage,string type, bool isKnockBack) //해당 함수로 변경 : 기타 무기와 호환을 위해서 collision -> 함수로 대체 (무기 타입에 따라서 knockback 함수 실행예정)
+    public void TakeDamage(float damage,string type, bool isKnockBack) //?�당 ?�수�?변�?: 기�? 무기?� ?�환???�해??collision -> ?�수�??��?(무기 ?�?�에 ?�라??knockback ?�수 ?�행?�정)
     {
         health -= damage;
         if (health > 0)
@@ -156,7 +156,8 @@ public class Enemy : MonoBehaviour
             StopCoroutine("DotCoroutine");
         }
     }
+
+    
 }
 
-//무기 다 만들고 할일 : 함수 리팩토링(itemdata와 연결해서 조금 더 유연하게 코드를 짠다. - 아이템 무기 유형 등으로 계산해서 바로 가져오기 가능하게 시도), 그리고 데이터에 넉백여부도 확인해서 거기에 맞춰서 넉백 넣기
-//0514 재수정 - 게임씬에서 weapon 클래스로 존재하는데 해당 클래스에 id를 통해서 아이템 데이터에 대한 정보를 남김 - 
+//status???�??flags?�시 ?�작?�보�
