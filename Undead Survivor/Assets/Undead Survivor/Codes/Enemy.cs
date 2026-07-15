@@ -14,10 +14,6 @@ public class Enemy : MonoBehaviour
     public RuntimeAnimatorController[] animCon;     //������ �ִϸ����͸� �ٲٱ� ���� ��Ʈ�ѷ�
     public Rigidbody2D target; 
     bool isLive;
-    private bool isDot = false;
-    private bool isSlow = false;
-    Coroutine Projectile;
-    Coroutine BackDot;
 
     Rigidbody2D rigid;
     Collider2D coll;    
@@ -80,7 +76,7 @@ public class Enemy : MonoBehaviour
         calcuspeed = speed;
     }
 
-    public void TakeDamage(float damage,string type, bool isKnockBack) //?�당 ?�수�?변�?: 기�? 무기?� ?�환???�해??collision -> ?�수�??��?(무기 ?�?�에 ?�라??knockback ?�수 ?�행?�정)
+    public void TakeDamage(float damage,string type, bool isKnockBack)
     {
         health -= damage;
         if (health > 0)
@@ -117,49 +113,4 @@ public class Enemy : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-
-    IEnumerator DotCoroutine(Dot dot)
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.5f);
-            TakeDamage(dot.damage, "Dot", dot.isKnockBack); 
-        }  
-    }
-
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("SlowArea") && isSlow == false)
-        {
-            isSlow = true;
-            calcuspeed = speed * ((100f - collision.GetComponent<SlowArea>().slowPer)/100f);
-            
-        }
-        else if (collision.CompareTag("ProjectileDot"))
-        {
-            statusAdd(1,collision.GetComponent<Dot>());
-        }
-        else if (collision.CompareTag("BackDot"))
-        {
-            statusAdd(2, collision.GetComponent<Dot>());
-        }
-    }
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("SlowArea") && isSlow == true)
-        {
-            isSlow = false;
-            calcuspeed = speed;
-        }
-
-        else if (collision.CompareTag("ProjectileDot"))
-        {
-            statusSub(1);
-        }
-        else if (collision.CompareTag("BackDot"))
-        {
-            statusSub(2);
-        }
-    }
-    
 }

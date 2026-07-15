@@ -9,11 +9,15 @@ public class Projectile : MonoBehaviour
     private float Timer = 0f;
     private float Radius = 1f;
     private float count;
-    private string Typename;
     public float damage;
+    private bool isKnockBack;
+    private bool isEvolved;
+    private bool isSub;
+
     private RaycastHit2D[] Enemys;
     public Dot DotObject;
-    private bool isKnockBack;
+
+
     Rigidbody projectileRB;
     
     private void Awake()
@@ -21,7 +25,7 @@ public class Projectile : MonoBehaviour
         projectileRB = GetComponent<Rigidbody>();
     }
 
-    public void init(float damage,float count ,float degree, float power, Vector3 target, bool isKnockBack)
+    public void init(float damage,float count, float power, Vector3 target, bool isKnockBack, bool isSub = false)
     {
         isArrived = false;
         Timer = 0f;
@@ -29,6 +33,9 @@ public class Projectile : MonoBehaviour
         this.damage = damage;
         this.count = count;
         this.isKnockBack = isKnockBack;
+        this.isSub = isSub;
+        if (isSub)
+            Radius /= 2;
         projectileRB.AddForce(target * power, ForceMode.Impulse);
         if(DotObject == null)
             gameObject.tag = "Bomb";
@@ -49,12 +56,16 @@ public class Projectile : MonoBehaviour
             }
         }
         
-        if (isArrived && CompareTag("Bomb")) // 일정시간 초 지난 후 폭발
+        if (isArrived && CompareTag("Bomb"))
         {
             if (projectileRB.linearVelocity != Vector3.zero)
                 projectileRB.linearVelocity = Vector3.zero;
+            if (isEvolved && !isSub)
+            {
+                spawnEvolveBomb();
+            }
             Timer += Time.fixedDeltaTime;
-            if(Timer >= BombTimer)
+            if (Timer >= BombTimer)
             {
                 Enemys = Physics2D.CircleCastAll(transform.position, Radius, Vector2.zero, 0, LayerMask.GetMask("Enemy"));
                 foreach (RaycastHit2D scanEnemy in Enemys)
@@ -68,9 +79,20 @@ public class Projectile : MonoBehaviour
         if(isArrived && CompareTag("Dot"))
         {
             Dot dot = Instantiate(DotObject, transform.position, Quaternion.identity);
-            dot.init(damage, count, isKnockBack);
+            dot.init(damage, count, isKnockBack,isEvolved);
             gameObject.SetActive(false);
         }   
     }
 
+    void spawnEvolveBomb()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            float angle = 360f * i / 6;
+            Vector3 targetAngle = Quaternion.Euler(0, 0, angle) * Vector3.right;
+            Projectile subBomb = GameManager.Instance.pool.Get(11).GetComponent<Projectile>();
+            subBomb.transform.rotation = Quaternion.Euler(0,0, angle);
+            subBomb.init(damage / 2, count, 3f, targetAngle, isKnockBack,true);
+        }
+    }
 }    

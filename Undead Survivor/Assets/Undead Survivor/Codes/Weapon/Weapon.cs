@@ -150,7 +150,6 @@ public class Weapon : MonoBehaviour //���� ������ ���
             }
         }
 
-        //���� id�� �°� ���� �Ӽ��� ����
         switch (id)
         {
             case 0:
@@ -222,16 +221,16 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 Range.GetComponent<Bullet>().init(damage, count, dir, data.isKnockback);
                 break;
             case "Boomerang":
-                Range.GetComponent<Boomerang>().init(damage, 3f, dir, data.isKnockback);
+                Range.GetComponent<Boomerang>().init(damage, 3f, dir, data.isKnockback,isEvolved);
                 break;
             case "Bomb":
-                Range.GetComponent<Projectile>().init(damage, count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);    
+                Range.GetComponent<Projectile>().init(damage, count, Random.Range(8f, 11f), dir, data.isKnockback);    
                 break;
             case "Bounding":
                 Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback, false);
                 break;
             case "Dot":
-                Range.GetComponent<Projectile>().init(damage,count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);
+                Range.GetComponent<Projectile>().init(damage,count, Random.Range(8f, 11f), dir, data.isKnockback);
                 break;
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
@@ -259,9 +258,7 @@ public class Weapon : MonoBehaviour //���� ������ ���
         if (id == 0)
             Batch();
 
-        //Weapon�� �������ϸ� ApplyGear�� �������� ���⿡ Gear ������ ����
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //�÷��̾�� broadcast���ֵ��� ��Ź
-        //�÷��̾ ������ �ִ� ��� Gear�� ���ؼ� ApplyGear�� ����
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
     }
 
     void Batch()// ������ ���⸦ ��ġ�ϴ� �Լ�
@@ -341,7 +338,11 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
         Dot.position = transform.position;
         Dot.rotation = Quaternion.identity;
-        Dot.GetComponent<Dot>().init(damage, count, data.isKnockback);
+        Dot.GetComponent<Dot>().init(damage, count, data.isKnockback,isEvolved);
+        if (isEvolved)
+        {
+
+        }
     }
 
     IEnumerator SequenceShot() 
@@ -352,20 +353,5 @@ public class Weapon : MonoBehaviour //���� ������ ���
             yield return new WaitForSeconds(0.1f);
         }
     }
-
-    void EvolveAttack(int prefabId) //���̵� ����ġ�ؼ� �����ҿ���
-    {
-        switch (prefabId)
-        {
-            case 4:
-
-                StartCoroutine(SequenceShot());
-                break;
-        default:
-                break;
-        }
-    }
-
+    //backdot 진화 로직 구상 생각 - 투명한 총알을 발사한다 -> 총알의 위치에서 일정한 시간 마다 backdot를 깐다. -> 일정시간이 지나면 총알은 사라진다. -> 
 }
-
-// ��ȭ �����͸� ��� ��� ����? -> evolve�����͸� ������ �����Ϳ� �ִ´�. �׸��� ��ȭ�� �װ��� �޾ƿͼ� ���� �ݿ��ϱ�

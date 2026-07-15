@@ -9,7 +9,7 @@ public class Boomerang : MonoBehaviour
     private Vector3 dir;
     private bool isKnockBack;
     Rigidbody2D rigid;
-    private bool isEvolve = false;
+    private bool isEvolved = false;
 
     private void Awake()
     {
@@ -24,14 +24,14 @@ public class Boomerang : MonoBehaviour
         }
     }
 
-    public void init(float damage,float acccelerate ,Vector3 dir, bool isKnockBack)
+    public void init(float damage,float acccelerate ,Vector3 dir, bool isKnockBack,bool isEvolved)
     {
         this.damage = damage;
         this.accelerate = accelerate;
         this.dir = dir;
         hit = false;
         rigid.linearVelocity = dir * 10f;
-        if (isKnockBack) 
+        if (isEvolved) 
         {
             StartCoroutine(increaseSizeRoutine());
         }

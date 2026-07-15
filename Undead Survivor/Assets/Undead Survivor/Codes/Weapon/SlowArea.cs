@@ -27,12 +27,11 @@ public class SlowArea : MonoBehaviour
     {
         if (isEvolved) 
         {
-            RaycastHit2D[] Enemys = Physics2D.CircleCastAll(transform.position, 1f, Vector2.zero, 0, LayerMask.GetMask("Enemy"));
+            RaycastHit2D[] Enemys = Physics2D.CircleCastAll(transform.position, 1f, Vector2.zero, 0, LayerMask.GetMask("EnemyStatus"));
             foreach (RaycastHit2D scanEnemy in Enemys)
             {
-                Enemy enemy = scanEnemy.collider.GetComponent<Enemy>();
-                // 스캔해서 해당 적에게 상태 부여하기
-                
+                EnemyStatus enemy = scanEnemy.collider.GetComponent<EnemyStatus>();
+                enemy.stunRoutine(2);
             }
         }
     }
