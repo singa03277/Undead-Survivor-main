@@ -99,7 +99,7 @@ public class EnemyStatus : MonoBehaviour
         {
             if (!addStatus(enemyStatus.slow))
                 return;
-
+                
             enemy.calcuspeed = enemy.speed * (collision.GetComponent<SlowArea>().slowPer / 100);
         }
     }
@@ -137,11 +137,25 @@ public class EnemyStatus : MonoBehaviour
         }
     }
 
-    public IEnumerator stunRoutine(float stunTime)
+    public void stun(float stunTime)
     {
+        Debug.Log("stun");
+        StartCoroutine(stunRoutine(stunTime));
+    }
+
+    private IEnumerator stunRoutine(float stunTime)
+    {
+        float currentSpeed = enemy.calcuspeed;
         enemy.calcuspeed = 0;
         yield return new WaitForSecondsRealtime(stunTime);
-        enemy.calcuspeed = enemy.speed;
+        if (hasStatus(enemyStatus.slow))
+        {
+            enemy.calcuspeed = currentSpeed;
+        }
+        else
+        {
+            enemy.calcuspeed = enemy.speed;
+        }
     }
 
     public IEnumerator evolveDotRoutine(Dot dot)

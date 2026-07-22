@@ -56,28 +56,6 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 timer += Time.deltaTime;
                 break;
             case 4:
-                timer += Time.deltaTime;
-                if (isEvolved)
-                {
-                    if(timer > speed)
-                        FireRange("Bullet");
-                }
-                else if(!isEvolved)
-                {
-                    if (timer > speed && isShoot == false)
-                    {
-                        timer = 0;
-                        isShoot = true;
-                        StartCoroutine("SequenceShot");
-
-                    }
-                    if (SequenceCount == count)
-                    {
-                        SequenceCount = 0;
-                        isShoot = false;
-                        StopCoroutine("SequenceShot");
-                    }
-                }
 
                 break;
             case 5:
@@ -110,7 +88,15 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 if(timer > speed)
                 {
                     timer = 0;
-                    SpawnBackDot();
+                    //SpawnBackDot();
+                }
+                break;
+            case 13:
+                timer += Time.deltaTime;
+                if (timer > speed)
+                {
+                    timer = 0;
+                    FireRange("Boomerang");
                 }
                 break;
             default:
@@ -168,9 +154,10 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 break;
             case 4:
                 speed = 5f * Character.WeaponRate;
+                StartCoroutine(SequenceShot());
                 break;
             case 5:
-                speed = 0.3f * Character.WeaponRate;
+                speed = 3f * Character.WeaponRate;
                 break;
             case 6:
                 speed = 0.3f * Character.WeaponRate;
@@ -185,6 +172,10 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 break;
             case 9:
                 speed = 5f * Character.WeaponRate;
+                StartCoroutine(ShootBackDot());
+                break;
+            case 13:
+                speed = 2f * Character.WeaponRate;
                 break;
             default:
                 break;
@@ -224,13 +215,13 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 Range.GetComponent<Boomerang>().init(damage, 3f, dir, data.isKnockback,isEvolved);
                 break;
             case "Bomb":
-                Range.GetComponent<Projectile>().init(damage, count, Random.Range(8f, 11f), dir, data.isKnockback);    
+                Range.GetComponent<Projectile>().init(damage, count, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);    
                 break;
             case "Bounding":
-                Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback, false);
+                Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback, isEvolved);
                 break;
             case "Dot":
-                Range.GetComponent<Projectile>().init(damage,count, Random.Range(8f, 11f), dir, data.isKnockback);
+                Range.GetComponent<Projectile>().init(damage,count, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);
                 break;
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
@@ -304,20 +295,22 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
     void SpawnFront()
     {
-        Transform Front;
-        Front = GameManager.Instance.pool.Get(prefabId).transform;
-        Front.parent = transform;
+        Transform front;
 
-        Front.localPosition = Vector3.zero;
-        Front.localRotation = Quaternion.identity;
+        front = GameManager.Instance.pool.Get(prefabId).transform;
+        front.parent = transform;
+        front.localPosition = Vector3.zero;
+        front.localRotation = Quaternion.identity;
 
+        front.GetComponent<FrontAttack>().init(damage, false);
+        
         if (isEvolved) 
         {
-            Front.GetComponent<FrontAttack>().init(damage, true);
+            front.GetComponent<FrontAttack>().init(damage, true);
             return;
         }
         else
-            Front.GetComponent<FrontAttack>().init(damage, false);
+            front.GetComponent<FrontAttack>().init(damage, false);
     }
     
     void SpawnArea()
@@ -339,19 +332,39 @@ public class Weapon : MonoBehaviour //���� ������ ���
         Dot.position = transform.position;
         Dot.rotation = Quaternion.identity;
         Dot.GetComponent<Dot>().init(damage, count, data.isKnockback,isEvolved);
-        if (isEvolved)
-        {
-
-        }
     }
+
 
     IEnumerator SequenceShot() 
     {
-        while(SequenceCount++ < count)
+        while(true)
         {
-            FireRange("SequenceBullet");
-            yield return new WaitForSeconds(0.1f);
+            float shotCount = 0;
+            if (isEvolved)
+            {
+                FireRange("SequenceBullet");
+                yield return new WaitForSeconds(0.12f);
+            }
+            else
+            {
+                while(shotCount++ < count)
+                {
+                    FireRange("SequenceBullet");
+                    yield return new WaitForSeconds(0.25f);
+                }
+            }
         }
     }
-    //backdot 진화 로직 구상 생각 - 투명한 총알을 발사한다 -> 총알의 위치에서 일정한 시간 마다 backdot를 깐다. -> 일정시간이 지나면 총알은 사라진다. -> 
+
+    IEnumerator ShootBackDot()
+    {
+        while (true)
+        {
+            Transform BackDotObject = GameManager.Instance.pool.Get(12).transform;
+            BackDotObject.position = transform.position;
+            BackDotObject.rotation = Quaternion.identity;
+            BackDotObject.GetComponent<EvolvedBackDot>().init(damage,count, CalcuDistance(player.scanner.randomTarget), isKnockBack);
+            yield return new WaitForSeconds(2f);
+        }
+    }
 }

@@ -4,12 +4,12 @@ using UnityEngine;
 public class Boomerang : MonoBehaviour
 {
     public float damage;
-    private bool hit;
+    private bool hit = false;
     private float accelerate;
     private Vector3 dir;
     private bool isKnockBack;
     Rigidbody2D rigid;
-    private bool isEvolved = false;
+    private bool isEvolved;
 
     private void Awake()
     {
@@ -24,10 +24,10 @@ public class Boomerang : MonoBehaviour
         }
     }
 
-    public void init(float damage,float acccelerate ,Vector3 dir, bool isKnockBack,bool isEvolved)
+    public void init(float damage,float count ,Vector3 dir, bool isKnockBack,bool isEvolved)
     {
         this.damage = damage;
-        this.accelerate = accelerate;
+        this.accelerate = count;
         this.dir = dir;
         hit = false;
         rigid.linearVelocity = dir * 10f;
@@ -54,7 +54,9 @@ public class Boomerang : MonoBehaviour
         if (!collision.CompareTag("Area"))
             return;
 
+        gameObject.transform.localScale = Vector3.one;
         gameObject.SetActive(false);
+        
     }
 
     IEnumerator increaseSizeRoutine()

@@ -13,10 +13,11 @@ public class Projectile : MonoBehaviour
     private bool isKnockBack;
     private bool isEvolved;
     private bool isSub;
+ 
 
     private RaycastHit2D[] Enemys;
     public Dot DotObject;
-
+    public Projectile SubBomb;
 
     Rigidbody projectileRB;
     
@@ -25,7 +26,7 @@ public class Projectile : MonoBehaviour
         projectileRB = GetComponent<Rigidbody>();
     }
 
-    public void init(float damage,float count, float power, Vector3 target, bool isKnockBack, bool isSub = false)
+    public void init(float damage,float count, float power, Vector3 target, bool isKnockBack,bool isEvolved ,bool isSub = false)
     {
         isArrived = false;
         Timer = 0f;
@@ -34,6 +35,7 @@ public class Projectile : MonoBehaviour
         this.count = count;
         this.isKnockBack = isKnockBack;
         this.isSub = isSub;
+        this.isEvolved = isEvolved;
         if (isSub)
             Radius /= 2;
         projectileRB.AddForce(target * power, ForceMode.Impulse);
@@ -62,7 +64,8 @@ public class Projectile : MonoBehaviour
                 projectileRB.linearVelocity = Vector3.zero;
             if (isEvolved && !isSub)
             {
-                spawnEvolveBomb();
+                SpawnEvolveBomb();
+                isEvolved = false;
             }
             Timer += Time.fixedDeltaTime;
             if (Timer >= BombTimer)
@@ -84,15 +87,15 @@ public class Projectile : MonoBehaviour
         }   
     }
 
-    void spawnEvolveBomb()
+    void SpawnEvolveBomb()
     {
         for (int i = 0; i < 6; i++)
         {
             float angle = 360f * i / 6;
+            Projectile subbomb = GameManager.Instance.pool.Get(11).GetComponent<Projectile>();
+            subbomb.transform.position = transform.position;
             Vector3 targetAngle = Quaternion.Euler(0, 0, angle) * Vector3.right;
-            Projectile subBomb = GameManager.Instance.pool.Get(11).GetComponent<Projectile>();
-            subBomb.transform.rotation = Quaternion.Euler(0,0, angle);
-            subBomb.init(damage / 2, count, 3f, targetAngle, isKnockBack,true);
+            subbomb.init(damage / 2, count, 3f, targetAngle, isKnockBack,true,true);
         }
     }
 }    

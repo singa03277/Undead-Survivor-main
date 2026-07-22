@@ -16,14 +16,15 @@ public class Dot : MonoBehaviour
         this.durationTime = count;
         this.isKnockBack = isKnockBack;
         this.isEvolved = isEvolved;
+        if (isEvolved && gameObject.CompareTag("ProjectileDot"))
+        {
+            Debug.Log("routine start");            
+            StartCoroutine(increaseSizeRoutine());
+        }
     }
     private void FixedUpdate()
     {
-        durationTimer += Time.fixedDeltaTime;
-        if (gameObject.CompareTag("ProjectileDot") && isEvolved)
-        {
-            StartCoroutine(increaseSizeRoutine());
-        }
+        durationTimer += Time.deltaTime;
         if (durationTimer > durationTime)
         {
             durationTimer = 0f;
@@ -33,7 +34,7 @@ public class Dot : MonoBehaviour
 
     IEnumerator increaseSizeRoutine()
     {
-        float increase = 0.1f;
+        float increase = 1.3f;
         while (true)
         {
             gameObject.transform.localScale += Vector3.one * increase * Time.deltaTime;

@@ -13,11 +13,12 @@ public class Boundingweapon : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void init(float damage, float boundCount,Vector3 dir, bool isKnockBack, bool isEvolve)
+    public void init(float damage, float boundCount,Vector3 dir, bool isKnockBack, bool isEvolved)
     {
         this.damage= damage;
         this.bounceCount= boundCount;
         this.isKnockBack= isKnockBack;
+        this.isEvolved = isEvolved;
         rb.linearVelocity = dir * 15f;
     }
 
@@ -64,7 +65,7 @@ public class Boundingweapon : MonoBehaviour
     {
         if(bounceCount <= -1)
         {
-            Object.Destroy(gameObject); 
+            gameObject.SetActive(false); 
         }
     }
 

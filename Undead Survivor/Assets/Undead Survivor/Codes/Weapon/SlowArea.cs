@@ -25,13 +25,21 @@ public class SlowArea : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isEvolved) 
+        stunTime += Time.deltaTime;
+
+        if (isEvolved && (stunTime > stunTimer)) 
         {
-            RaycastHit2D[] Enemys = Physics2D.CircleCastAll(transform.position, 1f, Vector2.zero, 0, LayerMask.GetMask("EnemyStatus"));
+            stunTime = 0f;
+            RaycastHit2D[] Enemys = Physics2D.CircleCastAll(transform.position, 3f, Vector2.zero, 0, LayerMask.GetMask("Enemy"));
+            Debug.Log(Enemys.Length);
             foreach (RaycastHit2D scanEnemy in Enemys)
             {
+                Debug.Log(scanEnemy.collider.name);
+
+                Debug.Log(scanEnemy.collider.GetComponent<Enemy>());
+                Debug.Log(scanEnemy.collider.GetComponent<EnemyStatus>());
                 EnemyStatus enemy = scanEnemy.collider.GetComponent<EnemyStatus>();
-                enemy.stunRoutine(2);
+                enemy.stun(2);
             }
         }
     }
