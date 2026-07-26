@@ -1,13 +1,15 @@
+using System.Collections;
 using UnityEngine;
 
 public class Boomerang : MonoBehaviour
 {
     public float damage;
-    private bool hit;
+    private bool hit = false;
     private float accelerate;
     private Vector3 dir;
     private bool isKnockBack;
     Rigidbody2D rigid;
+    private bool isEvolved;
 
     private void Awake()
     {
@@ -22,14 +24,17 @@ public class Boomerang : MonoBehaviour
         }
     }
 
-    public void init(float damage,float acccelerate ,Vector3 dir, bool isKnockBack)
+    public void init(float damage,float count ,Vector3 dir, bool isKnockBack,bool isEvolved)
     {
         this.damage = damage;
-        this.accelerate = accelerate;
+        this.accelerate = count;
         this.dir = dir;
-        this.isKnockBack = isKnockBack;
         hit = false;
         rigid.linearVelocity = dir * 10f;
+        if (isEvolved) 
+        {
+            StartCoroutine(increaseSizeRoutine());
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -49,6 +54,18 @@ public class Boomerang : MonoBehaviour
         if (!collision.CompareTag("Area"))
             return;
 
+        gameObject.transform.localScale = Vector3.one;
         gameObject.SetActive(false);
+        
+    }
+
+    IEnumerator increaseSizeRoutine()
+    {
+        float increase = 0.1f;
+        while (true)
+        {
+            gameObject.transform.localScale += Vector3.one * increase * Time.deltaTime;
+            yield return null;
+        }
     }
 }

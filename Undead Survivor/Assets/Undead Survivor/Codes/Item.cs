@@ -77,8 +77,8 @@ public class Item : MonoBehaviour
 
                     weapon.LevelUp(nextDamage, nextCount); //Weapon의 LevelUp 함수를 이용해 레벨업
                 }
-
                 level++;
+
                 break;
             case ItemData.ItemType.Glove: // 무기가 아닌 장비들은 같은 로직을 사용
             case ItemData.ItemType.Shoe:
@@ -110,4 +110,7 @@ public class Item : MonoBehaviour
             GetComponent<Button>().interactable = false;
         }
     }
+
+    public void Evolve() { }// 아마 무기 진화를 하면 해당 함수 호출
+    //추가적인 생각 : 모든 장비, 무기들은 player의 자식 컴포넌트로 추가된다. 그렇다면 data id 마다 이름은 항상 같다. 그럼 해당 그걸 조건 기어 습득에 대한 bool값 선언(weapon클래스에서 실시), 레벨이 만렙일 떄 해당 클래스에서 추적해서 2개의 조건 달성 시 evolve가 적용되고 그러면 weapon의 진화함수를 통해서 나오게 된다.
 }

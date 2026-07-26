@@ -14,7 +14,7 @@ public class Laser : MonoBehaviour
     private float WaitTimer = 0f;
     private bool isWeaponTime = false;
     private Vector3 offset;
-
+    private bool isEvolved = false;
     private float damage;
     void Awake()
     {
@@ -23,37 +23,42 @@ public class Laser : MonoBehaviour
         play = GameManager.Instance.player.GetComponent<Player>();
     }
 
-    public void init(float damage, float WeaponTime)
+    public void init(float damage, float WeaponTime, bool isEvolved)
     {
         this.damage = damage;
         this.WeaponTime = WeaponTime;
         isWeaponTime = true;
+        this.isEvolved = isEvolved;
     }
     private void FixedUpdate()
     {
-        if (isWeaponTime)
+        if (!isEvolved)
         {
-            WeaponTimer += Time.deltaTime;
-            if(WeaponTimer > WeaponTime)
+            if (isWeaponTime)
             {
-                Sprite.enabled = false;
-                Colli.enabled = false;
-                isWeaponTime = false;
-                WeaponTimer = 0f;
+                WeaponTimer += Time.deltaTime;
+                if (WeaponTimer > WeaponTime)
+                {
+                    Sprite.enabled = false;
+                    Colli.enabled = false;
+                    isWeaponTime = false;
+                    WeaponTimer = 0f;
+                }
+            }
+            else
+            {
+                WaitTimer += Time.deltaTime;
+                if (WaitTimer > WaitTime)
+                {
+                    Sprite.enabled = true;
+                    Colli.enabled = true;
+                    isWeaponTime = true;
+                    WaitTimer = 0f;
+                }
+                return;
             }
         }
-        else
-        {
-            WaitTimer += Time.deltaTime;
-            if (WaitTimer > WaitTime)
-            {
-                Sprite.enabled = true;
-                Colli.enabled = true;
-                isWeaponTime = true;
-                WaitTimer = 0f;
-            }
-            return;
-        }
+
         PlayerDir = play.inputVec.normalized;
         LaserDir();
     }

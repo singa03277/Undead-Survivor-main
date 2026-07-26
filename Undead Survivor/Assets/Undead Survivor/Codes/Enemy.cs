@@ -14,10 +14,6 @@ public class Enemy : MonoBehaviour
     public RuntimeAnimatorController[] animCon;     //������ �ִϸ����͸� �ٲٱ� ���� ��Ʈ�ѷ�
     public Rigidbody2D target; 
     bool isLive;
-    private bool isDot = false;
-    private bool isSlow = false;
-    Coroutine Projectile;
-    Coroutine BackDot;
 
     Rigidbody2D rigid;
     Collider2D coll;    
@@ -80,7 +76,7 @@ public class Enemy : MonoBehaviour
         calcuspeed = speed;
     }
 
-    public void TakeDamage(float damage,string type, bool isKnockBack) //해당 함수로 변경 : 기타 무기와 호환을 위해서 collision -> 함수로 대체 (무기 타입에 따라서 knockback 함수 실행예정)
+    public void TakeDamage(float damage,string type, bool isKnockBack)
     {
         health -= damage;
         if (health > 0)
@@ -117,84 +113,4 @@ public class Enemy : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-
-    IEnumerator DotCoroutine(Dot dot)
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.5f);
-            TakeDamage(dot.damage, "Dot", dot.isKnockBack); 
-        }  
-    }
-
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("SlowArea") && isSlow == false)
-        {
-            isSlow = true;
-            calcuspeed = speed * ((100f - collision.GetComponent<SlowArea>().slowPer)/100f);
-            
-        }
-        else if (collision.CompareTag("ProjectileDot"))
-        {
-            statusAdd(1,collision.GetComponent<Dot>());
-        }
-        else if (collision.CompareTag("BackDot"))
-        {
-            statusAdd(2, collision.GetComponent<Dot>());
-        }
-    }
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("SlowArea") && isSlow == true)
-        {
-            isSlow = false;
-            calcuspeed = speed;
-        }
-
-        else if (collision.CompareTag("ProjectileDot"))
-        {
-            statusSub(1);
-        }
-        else if (collision.CompareTag("BackDot"))
-        {
-            statusSub(2);
-        }
-    }
-    void statusAdd(int newStatus, Dot dot)
-    {
-        switch (newStatus)
-        {
-            case 1:
-                if(Projectile == null)
-                    Projectile = StartCoroutine(DotCoroutine(dot));
-                break;
-            case 2:
-                if(BackDot == null)
-                    BackDot = StartCoroutine(DotCoroutine(dot));
-                break;
-        }
-    }
-    void statusSub(int subStatus)
-    {
-        switch (subStatus)
-        {
-            case 1:
-                if(Projectile != null)
-                {
-                    StopCoroutine(Projectile);
-                    Projectile = null;
-                }
-                break;
-            case 2:
-                if(BackDot != null)
-                {
-                    StopCoroutine(BackDot);
-                    BackDot = null;
-                }
-                break;
-        }
-    }
-
 }
-

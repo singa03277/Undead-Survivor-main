@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Æ¨±â´Â ¹«±â ÇöÀç Æ¨±â´Â ·ÎÁ÷ ¹× ±âÅ¸ È£È¯ ¹®Á¦·Î µÚ·Î ¹Ì·é»óÅÂ
-public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ µû¶ó¼­ ´Ù¸¥ ÀÛµ¿À» º¸¿©ÁØ´Ù)
+
+public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ idï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½Ûµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½)
 {
     public int id;
     public int prefabId;
@@ -15,7 +15,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
     private bool isRandom = false;
     private bool isShoot = false;
     private float SequenceCount;
-    private bool isEvolve = false; //ÁøÈ­ ¹«±â °³¹ß ½Ã »ç¿ëµÉ º¯¼ö
+    private bool isEvolved = false; //ï¿½ï¿½È­ ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ëº¯ï¿½ï¿½ - ï¿½ï¿½Å©ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ñ±³¸ï¿½ ï¿½Ø¼ï¿½ ï¿½ï¿½ë¿¹ï¿½ï¿½
     public float timer;
     Player player;
     ItemData data;
@@ -29,6 +29,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
         if (!GameManager.Instance.isLive)
             return;
 
+        
         switch (id)
         {
             case 0:
@@ -55,20 +56,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
                 timer += Time.deltaTime;
                 break;
             case 4:
-                timer += Time.deltaTime;
-                if(timer > speed && isShoot == false)
-                {
-                    timer = 0;
-                    isShoot= true;
-                    StartCoroutine("SequenceShot");
-                    
-                }
-                if(SequenceCount == count)
-                {
-                    SequenceCount = 0;
-                    isShoot= false;
-                    StopCoroutine("SequenceShot");
-                }
+
                 break;
             case 5:
                 timer += Time.deltaTime;
@@ -100,7 +88,15 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
                 if(timer > speed)
                 {
                     timer = 0;
-                    SpawnBackDot();
+                    //SpawnBackDot();
+                }
+                break;
+            case 13:
+                timer += Time.deltaTime;
+                if (timer > speed)
+                {
+                    timer = 0;
+                    FireRange("Boomerang");
                 }
                 break;
             default:
@@ -117,9 +113,9 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
     public void Init(ItemData data)
     {
         this.data = data;
-        name = "Weapon " + data.itemId; //ÀÌ¸§ ¼³Á¤
-        transform.parent = player.transform; //ºÎ¸ð ¿ÀºêÁ§Æ® ¼³Á¤
-        //ÇÃ·¹ÀÌ¾î ¾È¿¡¼­ À§Ä¡¸¦ 0, 0, 0À¸·Î ¸ÂÃß±â ¶§¹®¿¡ LocalPostion »ç¿ë
+        name = "Weapon " + data.itemId; //ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+        transform.parent = player.transform; //ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+        //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½È¿ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ 0, 0, 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ LocalPostion ï¿½ï¿½ï¿½
         transform.localPosition = Vector3.zero;
 
         //Property Set
@@ -131,7 +127,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
 
         for (int i = 0; i < GameManager.Instance.pool.prefabs.Length; i++)
         {
-            //ÇÁ¸®ÆÕ ¾ÆÀÌµð´Â Ç®¸µ ¸Å´ÏÀúÀÇ º¯¼ö¿¡¼­ Ã£¾Æ¼­ ÃÊ±âÈ­
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ï¿½ Ç®ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½Ê±ï¿½È­
 
             if (data.projectile == GameManager.Instance.pool.prefabs[i])
             {
@@ -140,11 +136,10 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
             }
         }
 
-        //¹«±â id¿¡ ¸Â°Ô ¹«±â ¼Ó¼ºÀ» ¼³Á¤
         switch (id)
         {
             case 0:
-                speed = 150 * Character.WeaponSpeed;   //¸¶ÀÌ³Ê½º = ½Ã°è¹æÇâ
+                speed = 150 * Character.WeaponSpeed;   //ï¿½ï¿½ï¿½Ì³Ê½ï¿½ = ï¿½Ã°ï¿½ï¿½ï¿½ï¿½
                 Batch();
                 break;
             case 1:
@@ -159,9 +154,10 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
                 break;
             case 4:
                 speed = 5f * Character.WeaponRate;
+                StartCoroutine(SequenceShot());
                 break;
             case 5:
-                speed = 0.3f * Character.WeaponRate;
+                speed = 3f * Character.WeaponRate;
                 break;
             case 6:
                 speed = 0.3f * Character.WeaponRate;
@@ -176,20 +172,24 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
                 break;
             case 9:
                 speed = 5f * Character.WeaponRate;
+                StartCoroutine(ShootBackDot());
+                break;
+            case 13:
+                speed = 2f * Character.WeaponRate;
                 break;
             default:
                 break;
         }
-        Hand hand = player.hands[(int)data.itemType]; //¾ÆÀÌÅÛ Å¸ÀÔ¿¡ ¸Â´Â ÇÚµå¸¦ ¾ÆÀÌÅÛÀ» hand¿¡ ¿¬°á
-        hand.spriter.sprite = data.hand; //Ãß°¡ÇØ³ù´ø hand sprite¸¦ Àû¿ë
+        Hand hand = player.hands[(int)data.itemType]; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ô¿ï¿½ ï¿½Â´ï¿½ ï¿½Úµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ handï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        hand.spriter.sprite = data.hand; //ï¿½ß°ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ hand spriteï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         hand.gameObject.SetActive(true);
 
-        //WeaponÀÌ »õ·Ó°Ô Ãß°¡µÇ¸é ApplyGear·Î »õ·Ó°Ô Ãß°¡µÈ ¹«±â¿¡ Gear ·¹º§À» Àû¿ë
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //ÇÃ·¹ÀÌ¾î¿¡°Ô broadcastÇØÁÖµµ·Ï ºÎÅ¹
+        //Weaponï¿½ï¿½ ï¿½ï¿½ï¿½Ó°ï¿½ ï¿½ß°ï¿½ï¿½Ç¸ï¿½ ApplyGearï¿½ï¿½ ï¿½ï¿½ï¿½Ó°ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¿¡ Gear ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ broadcastï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½Å¹
 
     }
 
-    void FireRange(string name) //ÁøÈ­ ¿©ºÎ¿¡ µû¶ó¼­µµ ºÐ·ùÇÒ¿¹Á¤
+    void FireRange(string name) // ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ß»ç¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     {
         Vector3 dir;
         if (isRandom)
@@ -212,16 +212,16 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
                 Range.GetComponent<Bullet>().init(damage, count, dir, data.isKnockback);
                 break;
             case "Boomerang":
-                Range.GetComponent<Boomerang>().init(damage, 3f, dir, data.isKnockback);
+                Range.GetComponent<Boomerang>().init(damage, 3f, dir, data.isKnockback,isEvolved);
                 break;
             case "Bomb":
-                Range.GetComponent<Projectile>().init(damage, count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);    
+                Range.GetComponent<Projectile>().init(damage, count, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);    
                 break;
             case "Bounding":
-                Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback);
+                Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback, isEvolved);
                 break;
             case "Dot":
-                Range.GetComponent<Projectile>().init(damage,count, Random.Range(30f, 80f), Random.Range(8f, 11f), dir, data.isKnockback);
+                Range.GetComponent<Projectile>().init(damage,count, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);
                 break;
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
@@ -241,44 +241,42 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
         return dir.normalized;
     }
 
-    public void LevelUp(float damage, int count)
+    public void LevelUp(float damage, int count) //ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ß»ï¿½Ã¼ï¿½ï¿½ ï¿½Æ´Ñ°ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½(spawn --- ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê¿ï¿½)
     {
         this.damage = damage * Character.Damage;
         this.count += count;
 
-        if (id == 0) //id°¡ 0ÀÌ¸é Àç¹èÄ¡
+        if (id == 0)
             Batch();
 
-        //WeaponÀÌ ·¹º§¾÷ÇÏ¸é ApplyGear·Î ·¹º§¾÷ÇÑ ¹«±â¿¡ Gear ·¹º§À» Àû¿ë
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //ÇÃ·¹ÀÌ¾î¿¡°Ô broadcastÇØÁÖµµ·Ï ºÎÅ¹
-        //ÇÃ·¹ÀÌ¾î°¡ °¡Áö°í ÀÖ´Â ¸ðµç Gear¿¡ ÇÑÇØ¼­ ApplyGear°¡ ½ÇÇà
+        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
     }
 
-    void Batch()// »ý¼ºµÈ ¹«±â¸¦ ¹èÄ¡ÇÏ´Â ÇÔ¼ö
+    void Batch()// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¦ ï¿½ï¿½Ä¡ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
     {
         for (int i = 0; i < count; i++)
         {
 
             Transform bullet;
             
-            // ±âÁ¸ ¿ÀºêÁ§Æ®¸¦ ¸ÕÀú È°¿ëÇÏ°í ¸ðÀÚ¶õ °ÍÀº Ç®¸µ¿¡¼­ °¡Á®¿À±â
-            if (i < transform.childCount) // ÀÚ½ÄÀ» °¡Áö°í ÀÖÀ¸¸é »õ·Î ²¨³»Áö ¾Ê°í
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ú¶ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            if (i < transform.childCount) // ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½
             {
-                bullet = transform.GetChild(i);  //±âÁ¸ÀÇ ÀÚ½ÄµéÀ» °¡Á®´Ù ¾´´Ù.
+                bullet = transform.GetChild(i);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½Äµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
             }
             else
             {
                 bullet = GameManager.Instance.pool.Get(prefabId).transform;
-                bullet.parent = transform;  //»õ·Î °¡Á®¿À´Â °Íµé¸¸ parent¸¦ ¼³Á¤ÇØÁÖ¸é µÈ´Ù. 
+                bullet.parent = transform;  //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Íµé¸¸ parentï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½È´ï¿½. 
             }
 
             bullet.localPosition = Vector3.zero;
             bullet.localRotation = Quaternion.identity;
 
-            Vector3 rotVec = Vector3.forward * 360 * i / count; //i¹øÂ° ¹«±âÀÇ È¸Àü °¢µµ¸¦ °è»ê
-            bullet.Rotate(rotVec);                              //rotVec¸¸Å­ È¸Àü
+            Vector3 rotVec = Vector3.forward * 360 * i / count; //iï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+            bullet.Rotate(rotVec);                              //rotVecï¿½ï¿½Å­ È¸ï¿½ï¿½
              
-            //ÀÌµ¿ ¹æÇâÀÌ Space.self°¡ ¾Æ´Ï¶ó WorldÀÎ ÀÌÀ¯´Â? ÀÌ¹Ì È¸Àü ÈÄ À§ÂÊ ¹æÇâÀ¸·Î 1.5¸¸Å­ ÀÌµ¿½ÃÅ°´Â °ÍÀ¸·Î ÇßÀ¸¹Ç·Î ÀÌµ¿ ¹æÇâÀº ¿ùµå¸¦ ±âÁØÀ¸·Î ¼³Á¤
+            //ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Space.selfï¿½ï¿½ ï¿½Æ´Ï¶ï¿½ Worldï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½? ï¿½Ì¹ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1.5ï¿½ï¿½Å­ ï¿½Ìµï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             bullet.Translate(bullet.up * 1.5f, Space.World);
             bullet.GetComponent<RotationWeapon>().init(damage,data.isKnockback);
         }
@@ -292,19 +290,27 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
         Laser.localPosition = Vector3.zero;
         Laser.localRotation = Quaternion.identity;
 
-        Laser.GetComponent<Laser>().init(damage,count);
+        Laser.GetComponent<Laser>().init(damage,count,isEvolved);
     }
 
     void SpawnFront()
     {
-        Transform Front;
-        Front = GameManager.Instance.pool.Get(prefabId).transform;
-        Front.parent = transform;
+        Transform front;
 
-        Front.localPosition = Vector3.zero;
-        Front.localRotation = Quaternion.identity;
+        front = GameManager.Instance.pool.Get(prefabId).transform;
+        front.parent = transform;
+        front.localPosition = Vector3.zero;
+        front.localRotation = Quaternion.identity;
 
-        Front.GetComponent<FrontAttack>().init(damage);
+        front.GetComponent<FrontAttack>().init(damage, false);
+        
+        if (isEvolved) 
+        {
+            front.GetComponent<FrontAttack>().init(damage, true);
+            return;
+        }
+        else
+            front.GetComponent<FrontAttack>().init(damage, false);
     }
     
     void SpawnArea()
@@ -316,7 +322,7 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
 
         Area.localPosition = Vector3.zero;
         Area.localRotation = Quaternion.identity;
-        Area.GetComponent<SlowArea>().init(damage, count);
+        Area.GetComponent<SlowArea>().init(damage, count,isEvolved);
     }
 
     void SpawnBackDot()
@@ -325,15 +331,40 @@ public class Weapon : MonoBehaviour //¹«±â °¢°¢¿¡ µé¾î°¡´Â ½ºÅ©¸³Æ®(¹«±âÀÇ id¿¡ 
 
         Dot.position = transform.position;
         Dot.rotation = Quaternion.identity;
-        Dot.GetComponent<Dot>().init(damage, count, data.isKnockback);
+        Dot.GetComponent<Dot>().init(damage, count, data.isKnockback,isEvolved);
     }
+
 
     IEnumerator SequenceShot() 
     {
-        while(SequenceCount++ < count)
+        while(true)
         {
-            FireRange("SequenceBullet");
-            yield return new WaitForSeconds(0.08f);
+            float shotCount = 0;
+            if (isEvolved)
+            {
+                FireRange("SequenceBullet");
+                yield return new WaitForSeconds(0.12f);
+            }
+            else
+            {
+                while(shotCount++ < count)
+                {
+                    FireRange("SequenceBullet");
+                    yield return new WaitForSeconds(0.25f);
+                }
+            }
+        }
+    }
+
+    IEnumerator ShootBackDot()
+    {
+        while (true)
+        {
+            Transform BackDotObject = GameManager.Instance.pool.Get(12).transform;
+            BackDotObject.position = transform.position;
+            BackDotObject.rotation = Quaternion.identity;
+            BackDotObject.GetComponent<EvolvedBackDot>().init(damage,count, CalcuDistance(player.scanner.randomTarget), isKnockBack);
+            yield return new WaitForSeconds(2f);
         }
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4524126821567481809}
   - component: {fileID: -9097898085327806033}
   m_Layer: 0
-  m_Name: ProjectileBomb
+  m_Name: ProjectileSubBomb
   m_TagString: Bomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,7 +104,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   DotObject: {fileID: 0}
-  SubBomb: {fileID: -6454888330161537105, guid: 235f6422ca3427541a14419fbd13fda6, type: 3}
 --- !u!136 &4524126821567481809
 CapsuleCollider:
   m_ObjectHideFlags: 0
