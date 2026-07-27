@@ -13,9 +13,9 @@ public class Weapon : MonoBehaviour //���� ������ ���
     public float speed;
     public bool isKnockBack = false;
     private bool isRandom = false;
-    private bool isShoot = false;
+    private Vector3 lastDir;
     private float SequenceCount;
-    private bool isEvolved = false; //��ȭ ���⿡ ��뺯�� - ��ũ��Ʈ ������Ʈ�� ���� Ŭ������ �־ �񱳸� �ؼ� ��뿹��
+    private bool isEvolved = true; //��ȭ ���⿡ ��뺯�� - ��ũ��Ʈ ������Ʈ�� ���� Ŭ������ �־ �񱳸� �ؼ� ��뿹��
     public float timer;
     Player player;
     ItemData data;
@@ -194,15 +194,17 @@ public class Weapon : MonoBehaviour //���� ������ ���
         Vector3 dir;
         if (isRandom)
         {
-            dir = CalcuDistance(player.scanner.randomTarget);
+            dir = player.scanner.randomTarget == null ? lastDir : CalcuDistance(player.scanner.randomTarget);
         }
         else
         {
-            dir = CalcuDistance(player.scanner.nearestTarget.position);
+            dir = player.scanner.nearestTarget == null ? lastDir : CalcuDistance(player.scanner.nearestTarget.position);
         }
-            
-        if (dir == Vector3.zero)
-            return;
+        lastDir= dir;
+
+
+        
+
         Transform Range = GameManager.Instance.pool.Get(prefabId).transform;
         Range.position = transform.position;
         Range.rotation = Quaternion.FromToRotation(Vector3.up, dir);
@@ -226,7 +228,6 @@ public class Weapon : MonoBehaviour //���� ������ ���
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
                 break;
-            
 
         }
 
@@ -295,22 +296,23 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
     void SpawnFront()
     {
-        Transform front;
+        Transform left;
+        Transform right;
 
-        front = GameManager.Instance.pool.Get(prefabId).transform;
-        front.parent = transform;
-        front.localPosition = Vector3.zero;
-        front.localRotation = Quaternion.identity;
+        left = GameManager.Instance.pool.Get(prefabId).transform;
+        left.parent = transform;
+        left.localPosition = Vector3.zero;
+        left.localRotation = Quaternion.identity;
 
-        front.GetComponent<FrontAttack>().init(damage, false);
-        
-        if (isEvolved) 
-        {
-            front.GetComponent<FrontAttack>().init(damage, true);
-            return;
-        }
-        else
-            front.GetComponent<FrontAttack>().init(damage, false);
+        right = GameManager.Instance.pool.Get(prefabId).transform;
+        right.parent = transform;
+        right.localPosition = Vector3.zero;
+        right.localRotation = Quaternion.identity;
+
+
+        left.GetComponent<FrontAttack>().init(damage, false);
+        right.GetComponent<FrontAttack>().init(damage, false);
+
     }
     
     void SpawnArea()

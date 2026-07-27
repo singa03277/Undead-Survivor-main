@@ -9705,7 +9705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c6efd573dd645d488da2abce649813f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scanRange: 7
+  scanRange: 5
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
