@@ -61,7 +61,7 @@ public class Boomerang : MonoBehaviour
 
     IEnumerator increaseSizeRoutine()
     {
-        float increase = 0.1f;
+        float increase = 0.5f;
         while (true)
         {
             gameObject.transform.localScale += Vector3.one * increase * Time.deltaTime;

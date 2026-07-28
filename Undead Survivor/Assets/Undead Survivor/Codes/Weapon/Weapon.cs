@@ -311,7 +311,7 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
 
 
         left.GetComponent<FrontAttack>().init(damage, false);
-        right.GetComponent<FrontAttack>().init(damage, false);
+        right.GetComponent<FrontAttack>().init(damage, true);
 
     }
     
