@@ -17,8 +17,7 @@ public class Dot : MonoBehaviour
         this.isKnockBack = isKnockBack;
         this.isEvolved = isEvolved;
         if (isEvolved && gameObject.CompareTag("ProjectileDot"))
-        {
-            Debug.Log("routine start");            
+        {           
             StartCoroutine(increaseSizeRoutine());
         }
     }

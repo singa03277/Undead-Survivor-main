@@ -18,7 +18,7 @@ public class EnemyStatus : MonoBehaviour
     Enemy enemy;
     Coroutine ProjectileRoutine;
     Coroutine BackDotRoutine;
-    enemyStatus currentStatus;
+    public enemyStatus currentStatus;
 
     private void Awake()
     {

@@ -1,4 +1,5 @@
 using Cinemachine.Utility;
+using NUnit.Framework.Constraints;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,10 +9,12 @@ public class Weapon : MonoBehaviour //���� ������ ���
 {
     public int prefabId;
     public int id;
-    public int count = 3;
+    public int count;
+    public bool isKnockBack = false;
+    private bool isRandom = false;
     private Vector3 lastDir;
     private float SequenceCount;
-    private bool isEvolved = false; //��ȭ ���⿡ ��뺯�� - ��ũ��Ʈ ������Ʈ�� ���� Ŭ������ �־ �񱳸� �ؼ� ��뿹��
+    private bool isEvolved = false;
     public float timer;
     Player player;
     public WeaponStat stat = new WeaponStat();
@@ -86,7 +89,7 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 if(timer > stat.AttackSpeed)
                 {
                     timer = 0;
-                    //SpawnBackDot();
+                    SpawnBackDot();
                 }
                 break;
             case 13:
@@ -104,7 +107,7 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
         if (Input.GetButtonDown("Jump"))
         {
-            LevelUp(10, 1);
+            LevelUp(10, 1,false);
         }
     }
 
@@ -121,7 +124,6 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
         for (int i = 0; i < GameManager.Instance.pool.prefabs.Length; i++)
         {
-            //������ ���̵�� Ǯ�� �Ŵ����� �������� ã�Ƽ� �ʱ�ȭ
 
             if (data.projectile == GameManager.Instance.pool.prefabs[i])
             {
@@ -181,7 +183,8 @@ public class Weapon : MonoBehaviour //���� ������ ���
         }
         else
         {
-            dir = player.scanner.nearestTarget == null ? lastDir : CalcuDistance(player.scanner.nearestTarget.position);
+            dir = player.scanner.nearestTarget == null ? lastDir : player.scanner.randomTarget.normalized;
+
         }
         lastDir = dir;
 
@@ -238,6 +241,8 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
         if (id == 0)
             Batch();
+        if (isEvolved == true)
+            Debug.Log("weapon change");
 
         player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
     }
@@ -351,6 +356,8 @@ public class Weapon : MonoBehaviour //���� ������ ���
         while (true)
         {
             Transform BackDotObject = GameManager.Instance.pool.Get(12).transform;
+            Vector3 dir = player.scanner.randomTarget;
+            Debug.Log(dir);
             BackDotObject.position = transform.position;
             BackDotObject.rotation = Quaternion.identity;
             BackDotObject.GetComponent<EvolvedBackDot>().init(stat, CalcuDistance(player.scanner.randomTarget), data.isKnockback);

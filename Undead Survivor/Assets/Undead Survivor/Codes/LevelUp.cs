@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Search;
 using UnityEngine;
 
 public class LevelUp : MonoBehaviour
 {
     RectTransform rect;
     Item[] items;
+    Item[] consumeItems;
+
 
     // Start is called before the first frame update
     void Awake()
     {
         rect = GetComponent<RectTransform>();
         items = GetComponentsInChildren<Item>(true); // true면 비활성화 된 item 컴포넌트도 가져온다.
+        consumeItems = items.Where(x => x.isConsumable).ToArray();
     }
 
     //레벨업 창을 보여주는 함수
@@ -65,13 +70,19 @@ public class LevelUp : MonoBehaviour
             //3. 만렙 아이템의 경우는 소비 아이템으로 대체
             if (ranItem.level == ranItem.data.damages.Length)
             {
-                items[4].gameObject.SetActive(true);
+                consumeItems[SelectRanItem(consumeItems)].gameObject.SetActive(true);
             }
             else
             {
                 ranItem.gameObject.SetActive(true);
             }
         }
-        
+    }
+    int SelectRanItem(Item[] itemArray)
+    {
+        int index = Random.Range(0, itemArray.Length);
+        return index;
     }
 }
+
+//level up자식 컴포넌트의 prefabid를 이용해서 하기
