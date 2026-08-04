@@ -24,4 +24,28 @@ public class Character : MonoBehaviour
     {
         get { return GameManager.Instance.playerId == 3 ? 1 : 0; }
     }
+
+    public static float Defense
+    {
+        get { return 1f; }
+    }
+
+    public static float AreaRadius
+    {
+        get { return 0.3f; }
+    }
+    
+    public static float AreaDuration
+    {
+        get { return 3f; }
+    }
+    public static float ProjectileCount
+    {
+        get { return 1f; }
+    }
+
+    public static float ProjectileSpeed
+    {
+        get { return 10f; }
+    }
 }

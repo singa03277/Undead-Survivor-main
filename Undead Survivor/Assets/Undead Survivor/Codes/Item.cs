@@ -36,11 +36,12 @@ public class Item : MonoBehaviour
             //%는 항상 100을 곱해서 넘겨주기
             case ItemData.ItemType.Melee:
             case ItemData.ItemType.Range:
-                //무기는 입력된 itemDesc의 텍스트의 매개변수에 damages와 counts를 넣어서 문자열 생성
-                textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100, data.counts[level]);
+                if(level == 0)
+                    textDesc.text = data.itemDesc;
+                else
+                    textDesc.text = GetItemText(level);
                 break;
-            case ItemData.ItemType.Glove:
-            case ItemData.ItemType.Shoe:
+            case ItemData.ItemType.Passive:
                 //장비는 입력된 itemDesc의 텍스트의 매개변수에 damages와 counts를 넣어서 문자열 생성
                 textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100);
                 break;
@@ -69,19 +70,16 @@ public class Item : MonoBehaviour
                 }
                 else
                 {
-                    float nextDamage = data.baseDamage;
-                    int nextCount = 0;
+                    float nextDamage = data.stat.Damage;
 
-                    nextDamage += data.baseDamage * data.damages[level]; //damages를 백분율이기 때문에 곱해서 더해줌
-                    nextCount += data.counts[level]; //count는 단순히 counts의 레벨을 인덱스로해서 가져온 값을 더해줌
+                    nextDamage += data.stat.Damage * data.damages[level-1]; //damages를 백분율이기 때문에 곱해서 더해줌
 
-                    weapon.LevelUp(nextDamage, nextCount); //Weapon의 LevelUp 함수를 이용해 레벨업
+                    weapon.LevelUp(nextDamage, level-1); //Weapon의 LevelUp 함수를 이용해 레벨업
                 }
                 level++;
 
                 break;
-            case ItemData.ItemType.Glove: // 무기가 아닌 장비들은 같은 로직을 사용
-            case ItemData.ItemType.Shoe:
+            case ItemData.ItemType.Passive:
                 if (level == 0) //레벨이 0일 때 버튼을 누르면 장비 오브젝트를 생성
                 {
                     GameObject newGear = new GameObject();
@@ -111,6 +109,40 @@ public class Item : MonoBehaviour
         }
     }
 
-    public void Evolve() { }// 아마 무기 진화를 하면 해당 함수 호출
-    //추가적인 생각 : 모든 장비, 무기들은 player의 자식 컴포넌트로 추가된다. 그렇다면 data id 마다 이름은 항상 같다. 그럼 해당 그걸 조건 기어 습득에 대한 bool값 선언(weapon클래스에서 실시), 레벨이 만렙일 떄 해당 클래스에서 추적해서 2개의 조건 달성 시 evolve가 적용되고 그러면 weapon의 진화함수를 통해서 나오게 된다.
+    string GetItemText(int level)
+    {
+        string itemText = "";
+
+        if (level == 1 && data.damages[level - 1] != data.stat.Damage)
+            itemText += $"\n공격력 {data.damages[level - 1] * 100}% 증가";
+        else if(level >= 2 && data.damages[level-1] != data.damages[level-2])
+            itemText += $"\n공격력 {data.damages[level - 1] * 100}% 증가";
+
+
+        switch (data.LevelUpStatTypes[level])
+        {
+            case ItemData.SubStatType.AttackSpeed:
+                itemText += $"\n공격속도 {data.subStat[level-1]}% 증가";
+                break;
+            case ItemData.SubStatType.AreaRadius:
+                itemText += $"\n범위 {data.subStat[level-1]}% 증가";
+                break;
+            case ItemData.SubStatType.ProjectileNum:
+                itemText += $"\n투사체 {data.subStat[level - 1]}개 증가";
+                break;
+            case ItemData.SubStatType.ProjectileSpeed:
+                itemText += $"\n투사체 속도 {data.subStat[level - 1]}% 증가";
+                break;
+            case ItemData.SubStatType.AreaDuration:
+                itemText += $"\n유지 시간 {data.subStat[level - 1]}% 증가";
+                break;
+            case ItemData.SubStatType.count:
+                itemText += $"\n카운트 {data.subStat[level - 1]} 증가";
+                break;
+            case ItemData.SubStatType.none:
+                break;
+        }
+
+        return itemText;
+    }
 }

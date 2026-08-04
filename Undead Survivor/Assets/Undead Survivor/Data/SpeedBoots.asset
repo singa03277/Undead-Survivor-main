@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6759877453d1fc548bf723113688761c, type: 3}
   m_Name: SpeedBoots
   m_EditorClassIdentifier: 
-  itemType: 3
+  itemType: 2
+  gearType: 1
   itemId: 10
   itemName: "\uC804\uD22C \uC7A5\uD654"
+  isRandomPlace: 0
   isKnockback: 0
   itemDesc: "\uC774\uB3D9\uC18D\uB3C4 {0}% \uC99D\uAC00"
   itemIcon: {fileID: -966295699, guid: d71a3dc7aa20fad4f9a99fc76a9254ba, type: 3}
@@ -29,3 +31,4 @@ MonoBehaviour:
   counts: 0000000000000000000000000000000000000000
   projectile: {fileID: 0}
   hand: {fileID: 0}
+  evolveData: {fileID: 0}
