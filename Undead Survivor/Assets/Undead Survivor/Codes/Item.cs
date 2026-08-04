@@ -136,7 +136,7 @@ public class Item : MonoBehaviour
             case ItemData.SubStatType.AreaDuration:
                 itemText += $"\n유지 시간 {data.subStat[level - 1]}% 증가";
                 break;
-            case ItemData.SubStatType.count:
+            case ItemData.SubStatType.count: // id를 골라서 다르게 글자 나오게 설정하기
                 itemText += $"\n카운트 {data.subStat[level - 1]} 증가";
                 break;
             case ItemData.SubStatType.none:

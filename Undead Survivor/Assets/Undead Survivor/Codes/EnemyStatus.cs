@@ -133,7 +133,7 @@ public class EnemyStatus : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            enemy.TakeDamage(dot.damage, "Dot", dot.isKnockBack);
+            enemy.TakeDamage(dot.stat.Damage, "Dot", dot.isKnockBack);
         }
     }
 
@@ -160,7 +160,7 @@ public class EnemyStatus : MonoBehaviour
 
     public IEnumerator evolveDotRoutine(Dot dot)
     {
-        float damage = dot.damage;
+        float damage = dot.stat.Damage;
         while (true)
         {
             yield return new WaitForSeconds(0.5f);

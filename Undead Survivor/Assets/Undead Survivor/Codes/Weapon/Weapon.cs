@@ -194,19 +194,19 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
                 Range.GetComponent<Bullet>().init(stat, dir, data.isKnockback);
                 break;
             case "Boomerang":
-                //Range.GetComponent<Boomerang>().init(damage, 3f, dir, data.isKnockback,isEvolved);
+                Range.GetComponent<Boomerang>().init(stat, dir, data.isKnockback,isEvolved);
                 break;
             case "Bomb":
-                //Range.GetComponent<Projectile>().init(damage, count, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);    
+                Range.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);    
                 break;
             case "Bounding":
-                //Range.GetComponent<Boundingweapon>().init(damage, count, dir, data.isKnockback, isEvolved);
+                Range.GetComponent<Boundingweapon>().init(stat, dir, data.isKnockback, isEvolved);
                 break;
             case "Dot":
-                //Range.GetComponent<Projectile>().init(damage,count, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);
+                Range.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);
                 break;
             case "SequenceBullet":
-                //Range.GetComponent<Bullet>().init(damage, 0, dir, data.isKnockback);
+                Range.GetComponent<Bullet>().init(stat, dir, data.isKnockback);
                 break;
             
 
@@ -282,7 +282,7 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
         Laser.localPosition = Vector3.zero;
         Laser.localRotation = Quaternion.identity;
 
-       // Laser.GetComponent<Laser>().init(damage,count,isEvolved);
+        Laser.GetComponent<Laser>().init(stat,data.isKnockback,isEvolved);
     }
 
     void SpawnFront()
@@ -293,16 +293,14 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
         front.parent = transform;
         front.localPosition = Vector3.zero;
         front.localRotation = Quaternion.identity;
-
-        //front.GetComponent<FrontAttack>().init(damage, false);
         
         if (isEvolved) 
         {
-            //front.GetComponent<FrontAttack>().init(damage, true);
+            front.GetComponent<FrontAttack>().init(stat, data.isKnockback, true);
             return;
         }
-        //else
-            //front.GetComponent<FrontAttack>().init(damage, false);
+        else
+            front.GetComponent<FrontAttack>().init(stat, data.isKnockback, false);
     }
     
     void SpawnArea()
@@ -314,7 +312,7 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
 
         Area.localPosition = Vector3.zero;
         Area.localRotation = Quaternion.identity;
-        //Area.GetComponent<SlowArea>().init(damage, count,isEvolved);
+        Area.GetComponent<SlowArea>().init(stat,isEvolved);
     }
 
     void SpawnBackDot()
@@ -323,7 +321,7 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
 
         Dot.position = transform.position;
         Dot.rotation = Quaternion.identity;
-        //Dot.GetComponent<Dot>().init(damage, count, data.isKnockback,isEvolved);
+        Dot.GetComponent<Dot>().init(stat, data.isKnockback,isEvolved);
     }
 
 
@@ -355,8 +353,9 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
             Transform BackDotObject = GameManager.Instance.pool.Get(12).transform;
             BackDotObject.position = transform.position;
             BackDotObject.rotation = Quaternion.identity;
-            //BackDotObject.GetComponent<EvolvedBackDot>().init(damage,count, CalcuDistance(player.scanner.randomTarget), isKnockBack);
+            BackDotObject.GetComponent<EvolvedBackDot>().init(stat, CalcuDistance(player.scanner.randomTarget), data.isKnockback);
             yield return new WaitForSeconds(2f);
         }
     }
 }
+

@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class Boomerang : MonoBehaviour
 {
-    public float damage;
     private bool hit = false;
     private float accelerate;
     private Vector3 dir;
     private bool isKnockBack;
-    Rigidbody2D rigid;
     private bool isEvolved;
+    WeaponStat stat;
+    Rigidbody2D rigid;
+
 
     private void Awake()
     {
@@ -24,13 +25,13 @@ public class Boomerang : MonoBehaviour
         }
     }
 
-    public void init(float damage,float count ,Vector3 dir, bool isKnockBack,bool isEvolved)
+    public void init(WeaponStat stat,Vector3 dir, bool isKnockBack,bool isEvolved)
     {
-        this.damage = damage;
-        this.accelerate = count;
+        this.stat = stat;
+        this.accelerate = 3f;
         this.dir = dir;
         hit = false;
-        rigid.linearVelocity = dir * 10f;
+        rigid.linearVelocity = dir * stat.ProjectileSpeed;
         if (isEvolved) 
         {
             StartCoroutine(increaseSizeRoutine());
@@ -44,7 +45,7 @@ public class Boomerang : MonoBehaviour
             if (hit == false)
                 hit = true;
             Enemy hitEnemy = collision.GetComponent<Enemy>();
-            hitEnemy.TakeDamage(damage, gameObject.tag, isKnockBack);
+            hitEnemy.TakeDamage(stat.Damage, gameObject.tag, isKnockBack);
         }
   
     }

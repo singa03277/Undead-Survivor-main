@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Dot : MonoBehaviour
 {
-    public float damage;
+   
     private float durationTime = 0f;
     private float durationTimer = 0f;
     public bool isEvolved;
     public bool isKnockBack;
-
-    public void init(float damage, float count, bool isKnockBack, bool isEvolved)
+    public WeaponStat stat;
+    public void init(WeaponStat stat, bool isKnockBack, bool isEvolved)
     {
-        this.damage = damage;
-        this.durationTime = count;
+        this.stat = stat;
+        this.durationTime = stat.Duration;
         this.isKnockBack = isKnockBack;
         this.isEvolved = isEvolved;
         if (isEvolved && gameObject.CompareTag("ProjectileDot"))
