@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ public class ItemData : ScriptableObject
     //���� Ÿ�� : �ٰŸ�, ���Ÿ�, �尩, �Ź�, ��
     public enum ItemType { Melee, Range, Passive, Heal }
     public enum GearType { AsGlove, SpeedBoots, HealthUp, Defense, AttackUp, AreaRadius, AreaTime, ProjectileCount, ProjectileSpeedUp, None }
-    public enum SubStatType { AttackSpeed , AreaRadius, AreaDuration, ProjectileNum, ProjectileSpeed, count, none }
+    public enum SubStatType { AttackSpeed , AreaRadius, AreaDuration, ProjectileNum, ProjectileSpeed, none }
 
     [Header("# Basic Info")]
     public WeaponStat stat;
@@ -36,5 +36,6 @@ public class ItemData : ScriptableObject
     public Sprite hand;
 
     [Header("# EvolveItemData")]
+    public int evolvePassiveId;
     public ItemData evolveData;
 }

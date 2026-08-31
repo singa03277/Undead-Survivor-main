@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +19,7 @@ public class Bullet : MonoBehaviour
     public void init(WeaponStat stat, Vector3 dir, bool isKnockBack)
     {
         this.stat = stat;
-        per = stat.count;
+        per = 3;
         this.isKnockBack = isKnockBack; 
         rigid.linearVelocity = dir * 15f;
     }

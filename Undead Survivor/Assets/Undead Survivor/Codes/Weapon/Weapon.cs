@@ -1,21 +1,23 @@
-using Cinemachine.Utility;
+﻿using Cinemachine.Utility;
 using NUnit.Framework.Constraints;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
+//using static UnityEngine.RuleTile.TilingRuleOutput;
 
 
 public class Weapon : MonoBehaviour //���� ������ ���� ��ũ��Ʈ(������ id�� ���� �ٸ� �۵��� �����ش�)
 {
     public int prefabId;
     public int id;
-    public int count;
     public bool isKnockBack = false;
     private bool isRandom = false;
     private Vector3 lastDir;
     private float SequenceCount;
     private bool isEvolved = false;
-    public float timer;
+    private bool isMaxLevel = false;
+
     Player player;
     public WeaponStat stat = new WeaponStat();
     ItemData data;
@@ -36,79 +38,11 @@ public class Weapon : MonoBehaviour //���� ������ ���
             case 0:
                 transform.Rotate(Vector3.back * stat.AttackSpeed * Time.deltaTime);
                 break;
-            case 1:
-                timer += Time.deltaTime;
-
-                if (timer > stat.AttackSpeed)
-                {
-                    timer = 0;
-                    FireRange("Bullet");
-                }
-                break;
-            case 2:
-                timer += Time.deltaTime;
-                if (timer > stat.AttackSpeed)
-                {
-                    timer = 0;
-                    FireRange("Dot");
-                }
-                break;
-            case 3:
-                timer += Time.deltaTime;
-                break;
-            case 4:
-
-                break;
-            case 5:
-                timer += Time.deltaTime;
-
-                if (timer > stat.AttackSpeed)
-                {
-                    timer = 0;
-                    FireRange("Bomb");
-                }
-                break;
-            case 6:
-                timer += Time.deltaTime;
-
-                if (timer > stat.AttackSpeed)
-                {
-                    timer = 0;
-                    FireRange("Bounding");
-                }
-                break;
-            case 7:
-                timer += Time.deltaTime;
-
-                break;
-            case 8:
-                timer += Time.deltaTime;
-                break;
-            case 9:
-                timer += Time.deltaTime;
-                if(timer > stat.AttackSpeed)
-                {
-                    timer = 0;
-                    SpawnBackDot();
-                }
-                break;
-            case 13:
-                timer += Time.deltaTime;
-                if (timer > stat.AttackSpeed)
-                {
-                    timer = 0;
-                    FireRange("Boomerang");
-                }
-                break;
             default:
                 break;
 
         }
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            LevelUp(10, 1,false);
-        }
     }
 
     public void Init(ItemData data)
@@ -137,19 +71,8 @@ public class Weapon : MonoBehaviour //���� ������ ���
             case 0:
                 Batch();
                 break;
-            case 1:    
-                break;
-            case 2:
-                break;
             case 3:
                 SpawnArea();
-                break;
-            case 4:
-                StartCoroutine(SequenceShot());
-                break;
-            case 5:
-                break;
-            case 6:
                 break;
             case 7:
                 SpawnLaser();
@@ -158,11 +81,10 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 SpawnFront();
                 break;
             case 9:
-                StartCoroutine(ShootBackDot());
-                break;
-            case 13:
+                StartCoroutine(BackDotRoutine());
                 break;
             default:
+                StartCoroutine(ShootRoutine());
                 break;
         }
         Hand hand = player.hands[(int)data.itemType]; //������ Ÿ�Կ� �´� �ڵ带 �������� hand�� ����
@@ -196,23 +118,9 @@ public class Weapon : MonoBehaviour //���� ������ ���
             case "Bullet":
                 Range.GetComponent<Bullet>().init(stat, dir, data.isKnockback);
                 break;
-            case "Boomerang":
-                Range.GetComponent<Boomerang>().init(stat, dir, data.isKnockback,isEvolved);
-                break;
-            case "Bomb":
-                Range.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);    
-                break;
-            case "Bounding":
-                Range.GetComponent<Boundingweapon>().init(stat, dir, data.isKnockback, isEvolved);
-                break;
-            case "Dot":
-                Range.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback,isEvolved);
-                break;
             case "SequenceBullet":
                 Range.GetComponent<Bullet>().init(stat, dir, data.isKnockback);
                 break;
-            
-
         }
 
     }
@@ -228,21 +136,32 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
     public void LevelUp(float damage, int level) //���Ÿ� �߻�ü�� �ƴѰ��� �߰����� �Լ� ���� �ʿ�(spawn --- �Լ��� �����ʿ�)
     {
-        
         stat.Damage = damage * Character.Damage;
-        this.count += count;
 
         switch (data.LevelUpStatTypes[level])
         {
             case ItemData.SubStatType.AttackSpeed:
-                //stat.AttackSpeed += stat.AttackSpeed * data.
+                stat.AttackSpeed += (stat.AttackSpeed * data.subStat[level]);
+                break;
+            case ItemData.SubStatType.AreaRadius:
+                stat.AreaRadius += (stat.AreaRadius * data.subStat[level]);
+                break;
+            case ItemData.SubStatType.AreaDuration:
+                stat.Duration += (stat.Duration * data.subStat[level]);
+                break;
+            case ItemData.SubStatType.ProjectileNum:
+                stat.ProjectileNum += data.subStat[level];
+                break;
+            case ItemData.SubStatType.ProjectileSpeed:
+                stat.ProjectileSpeed += (stat.ProjectileSpeed * data.subStat[level]);
                 break;
         }
 
         if (id == 0)
             Batch();
-        if (isEvolved == true)
-            Debug.Log("weapon change");
+
+        if(isMaxLevel == false && level+1 == data.damages.Length)
+            isMaxLevel = true;
 
         player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
     }
@@ -251,7 +170,7 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
     void Batch()// ������ ���⸦ ��ġ�ϴ� �Լ�
     {
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < stat.ProjectileNum; i++)
         {
 
             Transform bullet;
@@ -270,7 +189,7 @@ public class Weapon : MonoBehaviour //���� ������ ���
             bullet.localPosition = Vector3.zero;
             bullet.localRotation = Quaternion.identity;
 
-            Vector3 rotVec = Vector3.forward * 360 * i / count; //i��° ������ ȸ�� ������ ���
+            Vector3 rotVec = Vector3.forward * 360 * i / stat.ProjectileNum; //i��° ������ ȸ�� ������ ���
             bullet.Rotate(rotVec);                              //rotVec��ŭ ȸ��
              
             //�̵� ������ Space.self�� �ƴ϶� World�� ������? �̹� ȸ�� �� ���� �������� 1.5��ŭ �̵���Ű�� ������ �����Ƿ� �̵� ������ ���带 �������� ����
@@ -307,7 +226,7 @@ public class Weapon : MonoBehaviour //���� ������ ���
         else
             front.GetComponent<FrontAttack>().init(stat, data.isKnockback, false);
     }
-    
+
     void SpawnArea()
     {
         Transform Area;
@@ -320,36 +239,7 @@ public class Weapon : MonoBehaviour //���� ������ ���
         Area.GetComponent<SlowArea>().init(stat,isEvolved);
     }
 
-    void SpawnBackDot()
-    {
-        Transform Dot = GameManager.Instance.pool.Get(prefabId).transform;
 
-        Dot.position = transform.position;
-        Dot.rotation = Quaternion.identity;
-        Dot.GetComponent<Dot>().init(stat, data.isKnockback,isEvolved);
-    }
-
-
-    IEnumerator SequenceShot() 
-    {
-        while(true)
-        {
-            float shotCount = 0;
-            if (isEvolved)
-            {
-                FireRange("SequenceBullet");
-                yield return new WaitForSeconds(0.12f);
-            }
-            else
-            {
-                while(shotCount++ < count)
-                {
-                    FireRange("SequenceBullet");
-                    yield return new WaitForSeconds(0.25f);
-                }
-            }
-        }
-    }
 
     IEnumerator ShootBackDot()
     {
@@ -361,8 +251,93 @@ public class Weapon : MonoBehaviour //���� ������ ���
             BackDotObject.position = transform.position;
             BackDotObject.rotation = Quaternion.identity;
             BackDotObject.GetComponent<EvolvedBackDot>().init(stat, CalcuDistance(player.scanner.randomTarget), data.isKnockback);
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(stat.AttackSpeed);
         }
     }
-}
 
+    IEnumerator BackDotRoutine()
+    {
+        while (true)
+        {
+            SpawnBackDot();
+            yield return new WaitForSeconds(stat.AttackSpeed);
+        }
+    }
+
+    void SpawnBackDot()
+    {
+        Transform Dot = GameManager.Instance.pool.Get(prefabId).transform;
+
+        Dot.position = transform.position;
+        Dot.rotation = Quaternion.identity;
+        Dot.GetComponent<Dot>().init(stat, data.isKnockback, isEvolved);
+    }
+
+    IEnumerator ShootRoutine()
+    {
+        while (true)
+        {
+            Transform bullet;
+            Vector3 dir;
+            if (prefabId == 5)
+                dir = player.scanner.randomTarget;
+            else
+                dir = player.scanner.nearestTarget.position;
+            for (int i = 0; i < stat.ProjectileNum; i++) 
+            {
+                bullet = GameManager.Instance.pool.Get(prefabId).transform;
+                bullet.position = transform.position;
+                bullet.rotation = Quaternion.identity;
+                switch (prefabId)
+                {
+                    case 1:
+                        bullet.GetComponent<Bullet>().init(stat, dir, data.isKnockback);
+                        break;
+                    case 2:
+                        bullet.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback, isEvolved);
+                        break;
+                    case 4:
+                        bullet.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback, isEvolved);
+                        break;
+                    case 5:
+                        bullet.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback, isEvolved);
+                        break;
+                    case 6:
+                        bullet.GetComponent<Boundingweapon>().init(stat, dir, data.isKnockback, isEvolved);
+                        break;
+                    case 10:
+                        bullet.GetComponent<Boomerang>().init(stat, dir, data.isKnockback, isEvolved);
+                        break;
+                }
+                yield return new WaitForSeconds(0.3f);
+            }
+            yield return new WaitForSeconds(stat.AttackSpeed);
+        }
+    }
+
+    public void CheckEvolve()
+    {
+        if (isEvolved)
+            return;
+
+        if (!isMaxLevel)
+            return;
+
+        if (!GameManager.Instance.passiveInventory.Contains(data.evolvePassiveId))
+            return;
+
+        isEvolved = true;
+        ApplyEvolve();
+    }
+
+    void ApplyEvolve()
+    {
+        data = data.evolveData;
+        stat.init(data);
+        if (id == 8)
+            SpawnFront();
+        if (id == 9)
+            StartCoroutine(ShootBackDot());
+
+    }
+}

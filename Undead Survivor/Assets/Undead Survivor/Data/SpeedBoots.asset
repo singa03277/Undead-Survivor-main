@@ -12,23 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6759877453d1fc548bf723113688761c, type: 3}
   m_Name: SpeedBoots
   m_EditorClassIdentifier: 
+  stat:
+    Damage: 0
+    AttackSpeed: 0
+    AreaRadius: 0
+    Duration: 0
+    ProjectileNum: 0
+    ProjectileSpeed: 0
+    count: 0
   itemType: 2
   gearType: 1
-  itemId: 10
+  itemId: 13
   itemName: "\uC804\uD22C \uC7A5\uD654"
   isRandomPlace: 0
   isKnockback: 0
   itemDesc: "\uC774\uB3D9\uC18D\uB3C4 {0}% \uC99D\uAC00"
   itemIcon: {fileID: -966295699, guid: d71a3dc7aa20fad4f9a99fc76a9254ba, type: 3}
-  baseDamage: 0
-  baseCount: 0
   damages:
   - 0.1
   - 0.2
   - 0.3
   - 0.4
   - 0.5
-  counts: 0000000000000000000000000000000000000000
+  subStat: 
+  LevelUpStatTypes: 
   projectile: {fileID: 0}
   hand: {fileID: 0}
   evolveData: {fileID: 0}

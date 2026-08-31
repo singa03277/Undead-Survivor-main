@@ -1,4 +1,4 @@
-using UnityEditor.ShaderGraph;
+﻿using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 public class Boundingweapon : MonoBehaviour
@@ -17,7 +17,7 @@ public class Boundingweapon : MonoBehaviour
     public void init(WeaponStat stat ,Vector3 dir, bool isKnockBack, bool isEvolved)
     {
         this.stat = stat;
-        this.bounceCount= stat.count;
+        this.bounceCount = 5;
         this.isKnockBack= isKnockBack;
         this.isEvolved = isEvolved;
         rb.linearVelocity = dir * stat.ProjectileSpeed;

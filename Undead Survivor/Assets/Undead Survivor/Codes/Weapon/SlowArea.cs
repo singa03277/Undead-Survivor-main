@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SlowArea : MonoBehaviour
 {
@@ -20,7 +20,7 @@ public class SlowArea : MonoBehaviour
     {
         this.stat = stat;
         this.radius = stat.AreaRadius;
-        this.slowPer = stat.count;
+        this.slowPer = stat.Damage;
         this.isEvolved = isEvolved;
 
         cirCollider.radius = radius;

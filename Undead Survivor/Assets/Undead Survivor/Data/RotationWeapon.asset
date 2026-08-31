@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: RotationWeapon
   m_EditorClassIdentifier: 
   stat:
-    Damage: 20
+    Damage: 5
     AttackSpeed: 120
     AreaRadius: 1
     Duration: 1
-    ProjectileNum: 1
+    ProjectileNum: 3
     ProjectileSpeed: 1
-    count: 1
   itemType: 0
   gearType: 0
   itemId: 0
@@ -31,11 +30,9 @@ MonoBehaviour:
   damages:
   - 0.5
   - 1
-  - 1.5
-  - 2
-  - 3
-  subStat: 000000000000000000000000
-  LevelUpStatTypes: 000000000000000000000000
+  subStat: 0500000005000000
+  LevelUpStatTypes: 0000000000000000
   projectile: {fileID: 8334697221927480317, guid: 0d59f41b6888c9c4ab210a739b24f6db, type: 3}
   hand: {fileID: 143021600, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
-  evolveData: {fileID: 0}
+  evolvePassiveId: 14
+  evolveData: {fileID: 11400000}

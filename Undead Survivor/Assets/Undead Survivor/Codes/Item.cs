@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +10,7 @@ public class Item : MonoBehaviour
     public Weapon weapon;   //���� 
     public Gear gear;       //��� 
     public bool isConsumable;
+    
 
     Image icon;
     Text textLevel;
@@ -31,7 +32,7 @@ public class Item : MonoBehaviour
 
     void OnEnable()
     {
-        textLevel.text = "Lv." + (level + 1);
+        textLevel.text = "Lv." + (level+1);
         switch (data.itemType)
         {
             //%�� �׻� 100�� ���ؼ� �Ѱ��ֱ�
@@ -58,13 +59,17 @@ public class Item : MonoBehaviour
     {
         switch (data.itemType)
         {
-            case ItemData.ItemType.weapon:
+            case ItemData.ItemType.Melee:
+            case ItemData.ItemType.Range:
                 if (level == 0) //������ 0�� �� ��ư�� ������ ���� ������Ʈ�� ����
                 {
                     GameObject newWeapon = new GameObject();
-
-                    //���ο� ������Ʈ�� Weapon ������Ʈ �߰�
-                    //AddComponent �Լ� ��ȯ ���� �̸� ������ ������ ����.
+                    GameManager.Instance.weaponInventory.Add(data.itemId);
+                    if(GameManager.Instance.weaponInventory.Count == 6)
+                    {
+                        GameManager.Instance.weaponPool = GameManager.Instance.weaponInventory;
+                    }
+                        
                     weapon = newWeapon.AddComponent<Weapon>();
                     weapon.Init(data);
                 }
@@ -77,18 +82,23 @@ public class Item : MonoBehaviour
                     weapon.LevelUp(nextDamage, level-1); //Weapon�� LevelUp �Լ��� �̿��� ������
                 }
                 level++;
-                        
+                if (level-1 == data.damages.Length)
+                {
+                    GameManager.Instance.weaponPool.Remove(data.itemId);
+                    weapon.CheckEvolve();
                 }
-                
-                level++;
                 break;
+                        
             case ItemData.ItemType.Passive:
                 if (level == 0) //������ 0�� �� ��ư�� ������ ��� ������Ʈ�� ����
-                {
+                {   
                     GameObject newGear = new GameObject();
-
-                    //���ο� ������Ʈ�� Weapon ������Ʈ �߰�
-                    //AddComponent �Լ� ��ȯ ���� �̸� ������ ������ ����.
+                    GameManager.Instance.passiveInventory.Add(data.itemId);
+                    if (GameManager.Instance.passiveInventory.Count == 6)
+                    {
+                        GameManager.Instance.passivePool = GameManager.Instance.passiveInventory;
+                    }
+                        
                     gear = newGear.AddComponent<Gear>();
                     gear.Init(data);
                 }
@@ -99,6 +109,19 @@ public class Item : MonoBehaviour
                     gear.LevelUp(nextRate);
                 }
                 level++;
+
+                Weapon[] weapons = GameManager.Instance.player.GetComponentsInChildren<Weapon>();
+
+                foreach (Weapon weapon in weapons)
+                {
+                    weapon.CheckEvolve();
+                }
+
+                if (level-1 == data.damages.Length)
+                {
+                    GameManager.Instance.passivePool.Remove(data.itemId);
+                }
+
                 break;
             case ItemData.ItemType.Heal: // ��ȸ�� �������� �ȿ����� LevelUp �Լ� ������ X
                 GameManager.Instance.health = GameManager.Instance.maxHealth;
@@ -111,30 +134,27 @@ public class Item : MonoBehaviour
         string itemText = "";
 
         if (level == 1 && data.damages[level - 1] != data.stat.Damage)
-            itemText += $"\n���ݷ� {data.damages[level - 1] * 100}% ����";
+            itemText += $"\n데미지 {data.damages[level - 1] * 100}% 증가";
         else if(level >= 2 && data.damages[level-1] != data.damages[level-2])
-            itemText += $"\n���ݷ� {data.damages[level - 1] * 100}% ����";
+            itemText += $"\n데미지 {data.damages[level - 1] * 100}% 증가";
 
 
-        switch (data.LevelUpStatTypes[level])
+        switch (data.LevelUpStatTypes[level-1])
         {
             case ItemData.SubStatType.AttackSpeed:
-                itemText += $"\n���ݼӵ� {data.subStat[level-1]}% ����";
+                itemText += $"\n공격속도 {data.subStat[level-1]}% 증가";
                 break;
             case ItemData.SubStatType.AreaRadius:
-                itemText += $"\n���� {data.subStat[level-1]}% ����";
+                itemText += $"\n범위공격 범위 {data.subStat[level-1]}% 증가";
                 break;
             case ItemData.SubStatType.ProjectileNum:
-                itemText += $"\n����ü {data.subStat[level - 1]}�� ����";
+                itemText += $"\n투사체 개수 {data.subStat[level - 1]}개 증가";
                 break;
             case ItemData.SubStatType.ProjectileSpeed:
-                itemText += $"\n����ü �ӵ� {data.subStat[level - 1]}% ����";
+                itemText += $"\n투사체 속도 {data.subStat[level - 1]}% 증가";
                 break;
             case ItemData.SubStatType.AreaDuration:
-                itemText += $"\n���� �ð� {data.subStat[level - 1]}% ����";
-                break;
-            case ItemData.SubStatType.count: // id�� ��� �ٸ��� ���� ������ �����ϱ�
-                itemText += $"\nī��Ʈ {data.subStat[level - 1]} ����";
+                itemText += $"\n범위공격 유지 시간 {data.subStat[level - 1]}% 증가";
                 break;
             case ItemData.SubStatType.none:
                 break;
