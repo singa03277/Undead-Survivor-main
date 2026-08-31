@@ -7,9 +7,7 @@ public class Projectile : MonoBehaviour
     private bool isArrived = false;
     private float BombTimer = 2f;
     private float Timer = 0f;
-    private float Radius = 1f;
-    private float count;
-    public float damage;
+    private float Radius;
     private bool isKnockBack;
     private bool isEvolved;
     private bool isSub;
@@ -19,6 +17,7 @@ public class Projectile : MonoBehaviour
     public Dot DotObject;
     public Projectile SubBomb;
 
+    WeaponStat stat;
     Rigidbody projectileRB;
     
     private void Awake()
@@ -26,23 +25,26 @@ public class Projectile : MonoBehaviour
         projectileRB = GetComponent<Rigidbody>();
     }
 
-    public void init(float damage,float count, float power, Vector3 target, bool isKnockBack,bool isEvolved ,bool isSub = false)
+    public void init(WeaponStat stat,float power, Vector3 target, bool isKnockBack,bool isEvolved ,bool isSub = false)
     {
-        isArrived = false;
         Timer = 0f;
+        this.stat = stat;
+        isArrived = false;
         this.target = target;
-        this.damage = damage;
-        this.count = count;
         this.isKnockBack = isKnockBack;
         this.isSub = isSub;
         this.isEvolved = isEvolved;
-        if (isSub)
-            Radius /= 2;
-        projectileRB.AddForce(target * power, ForceMode.Impulse);
-        if(DotObject == null)
+        this.Radius = stat.AreaRadius;
+
+        if (DotObject == null)
             gameObject.tag = "Bomb";
         else
             gameObject.tag = "Dot";
+
+        if (isSub)
+            Radius /= 2;
+
+        projectileRB.AddForce(target * power, ForceMode.Impulse);
     }
     private void FixedUpdate()
     {
@@ -74,7 +76,7 @@ public class Projectile : MonoBehaviour
                 foreach (RaycastHit2D scanEnemy in Enemys)
                 {
                     Enemy enemy = scanEnemy.collider.GetComponent<Enemy>();
-                    enemy.TakeDamage(damage, gameObject.tag, isKnockBack);
+                    enemy.TakeDamage(stat.Damage, gameObject.tag, isKnockBack);
                 }
                 gameObject.SetActive(false);
             }
@@ -82,7 +84,7 @@ public class Projectile : MonoBehaviour
         if(isArrived && CompareTag("Dot"))
         {
             Dot dot = Instantiate(DotObject, transform.position, Quaternion.identity);
-            dot.init(damage, count, isKnockBack,isEvolved);
+            dot.init(stat, isKnockBack, isEvolved);
             gameObject.SetActive(false);
         }   
     }
@@ -95,7 +97,7 @@ public class Projectile : MonoBehaviour
             Projectile subbomb = GameManager.Instance.pool.Get(11).GetComponent<Projectile>();
             subbomb.transform.position = transform.position;
             Vector3 targetAngle = Quaternion.Euler(0, 0, angle) * Vector3.right;
-            subbomb.init(damage / 2, count, 3f, targetAngle, isKnockBack,true,true);
+            subbomb.init(stat, 3f, targetAngle, isKnockBack,true,true);
         }
     }
 }    

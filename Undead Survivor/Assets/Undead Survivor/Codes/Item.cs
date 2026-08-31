@@ -1,14 +1,16 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Item : MonoBehaviour
 {
-    public ItemData data;   //¾ÆÀÌÅÛ µ¥ÀÌÅÍ
-    public int level;       //·¹º§ 
-    public Weapon weapon;   //¹«±â 
-    public Gear gear;       //Àåºñ 
+    public ItemData data;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int level;       //ï¿½ï¿½ï¿½ï¿½ 
+    public Weapon weapon;   //ï¿½ï¿½ï¿½ï¿½ 
+    public Gear gear;       //ï¿½ï¿½ï¿½ 
+    public bool isConsumable;
+    
 
     Image icon;
     Text textLevel;
@@ -17,35 +19,36 @@ public class Item : MonoBehaviour
 
     void Awake()
     {
-        //ÀÚ½Ä ¿ÀºêÁ§Æ® icon
-        icon = GetComponentsInChildren<Image>()[1]; //Ã¹¹øÂ°[0]´Â ÀÚ±âÀÚ½Å
-        icon.sprite = data.itemIcon;                //itemDataÀÇ ¾ÆÀÌÄÜÀ¸·Î ÃÊ±âÈ­
+        //ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® icon
+        icon = GetComponentsInChildren<Image>()[1]; //Ã¹ï¿½ï¿½Â°[0]ï¿½ï¿½ ï¿½Ú±ï¿½ï¿½Ú½ï¿½
+        icon.sprite = data.itemIcon;                //itemDataï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 
-        Text[] texts = GetComponentsInChildren<Text>(); //ÀÚ½ÄÀÇ Text ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
-        textLevel = texts[0];   //item ¿ÀºêÁ§Æ®¿¡´Â Text°¡ ¾ø¾î¼­ ÀÚ½Ä¿¡ ÀÖ´Â Text¸¸ ¿À±â ¶§¹®¿¡ Ã¹¹øÂ°[0]·Î ÃÊ±âÈ­
-        textName = texts[1];    //GetComponentsÀÇ ¼ø¼­´Â °èÃş ±¸Á¶ÀÇ ¼ø¼­¸¦ µû¶ó°£´Ù.
+        Text[] texts = GetComponentsInChildren<Text>(); //ï¿½Ú½ï¿½ï¿½ï¿½ Text ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        textLevel = texts[0];   //item ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ Textï¿½ï¿½ ï¿½ï¿½ï¿½î¼­ ï¿½Ú½Ä¿ï¿½ ï¿½Ö´ï¿½ Textï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¹ï¿½ï¿½Â°[0]ï¿½ï¿½ ï¿½Ê±ï¿½È­
+        textName = texts[1];    //GetComponentsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ó°£´ï¿½.
         textDesc = texts[2];
-        textName.text = data.itemName; //¾ÆÀÌÅÛ ÀÌ¸§ ¾ÕÀ¸·Îµµ ¹öÆ°¿¡ °íÁ¤ÀÌ¹Ç·Î ¹Ù·Î ÃÊ±âÈ­
+        textName.text = data.itemName; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¹Ç·ï¿½ ï¿½Ù·ï¿½ ï¿½Ê±ï¿½È­
     }
 
     void OnEnable()
     {
-        textLevel.text = "Lv." + (level + 1);
+        textLevel.text = "Lv." + (level+1);
         switch (data.itemType)
         {
-            //%´Â Ç×»ó 100À» °öÇØ¼­ ³Ñ°ÜÁÖ±â
+            //%ï¿½ï¿½ ï¿½×»ï¿½ 100ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ñ°ï¿½ï¿½Ö±ï¿½
             case ItemData.ItemType.Melee:
             case ItemData.ItemType.Range:
-                //¹«±â´Â ÀÔ·ÂµÈ itemDescÀÇ ÅØ½ºÆ®ÀÇ ¸Å°³º¯¼ö¿¡ damages¿Í counts¸¦ ³Ö¾î¼­ ¹®ÀÚ¿­ »ı¼º
-                textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100, data.counts[level]);
+                if(level == 0)
+                    textDesc.text = data.itemDesc;
+                else
+                    textDesc.text = GetItemText(level);
                 break;
-            case ItemData.ItemType.Glove:
-            case ItemData.ItemType.Shoe:
-                //Àåºñ´Â ÀÔ·ÂµÈ itemDescÀÇ ÅØ½ºÆ®ÀÇ ¸Å°³º¯¼ö¿¡ damages¿Í counts¸¦ ³Ö¾î¼­ ¹®ÀÚ¿­ »ı¼º
+            case ItemData.ItemType.Passive:
+                //ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·Âµï¿½ itemDescï¿½ï¿½ ï¿½Ø½ï¿½Æ®ï¿½ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ damagesï¿½ï¿½ countsï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
                 textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100);
                 break;
             default:
-                //À½·á´Â ¼³¸í¸¸ Ãâ·Â
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
                 textDesc.text = string.Format(data.itemDesc, data.damages[level]);
                 break;
 
@@ -56,38 +59,46 @@ public class Item : MonoBehaviour
     {
         switch (data.itemType)
         {
-            case ItemData.ItemType.Melee: // ±ÙÁ¢, ¿ø°Å¸® ¹«±â´Â °°Àº ·ÎÁ÷À» »ç¿ë 
-            case ItemData.ItemType.Range: // case¸¦ ºÙ¿©ÁØ´Ù.
-                if (level == 0) //·¹º§ÀÌ 0ÀÏ ¶§ ¹öÆ°À» ´©¸£¸é ¿şÆù ¿ÀºêÁ§Æ®¸¦ »ı¼º
+            case ItemData.ItemType.Melee:
+            case ItemData.ItemType.Range:
+                if (level == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 {
                     GameObject newWeapon = new GameObject();
-
-                    //»õ·Î¿î ¿ÀºêÁ§Æ®¿¡ Weapon ÄÄÆ÷³ÍÆ® Ãß°¡
-                    //AddComponent ÇÔ¼ö ¹İÈ¯ °ªÀ» ¹Ì¸® ¼±¾ğÇÑ º¯¼ö¿¡ ÀúÀå.
+                    GameManager.Instance.weaponInventory.Add(data.itemId);
+                    if(GameManager.Instance.weaponInventory.Count == 6)
+                    {
+                        GameManager.Instance.weaponPool = GameManager.Instance.weaponInventory;
+                    }
+                        
                     weapon = newWeapon.AddComponent<Weapon>();
                     weapon.Init(data);
                 }
                 else
                 {
-                    float nextDamage = data.baseDamage;
-                    int nextCount = 0;
+                    float nextDamage = data.stat.Damage;
 
-                    nextDamage += data.baseDamage * data.damages[level]; //damages¸¦ ¹éºĞÀ²ÀÌ±â ¶§¹®¿¡ °öÇØ¼­ ´õÇØÁÜ
-                    nextCount += data.counts[level]; //count´Â ´Ü¼øÈ÷ countsÀÇ ·¹º§À» ÀÎµ¦½º·ÎÇØ¼­ °¡Á®¿Â °ªÀ» ´õÇØÁÜ
+                    nextDamage += data.stat.Damage * data.damages[level-1]; //damagesï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-                    weapon.LevelUp(nextDamage, nextCount); //WeaponÀÇ LevelUp ÇÔ¼ö¸¦ ÀÌ¿ëÇØ ·¹º§¾÷
+                    weapon.LevelUp(nextDamage, level-1); //Weaponï¿½ï¿½ LevelUp ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 }
                 level++;
-
-                break;
-            case ItemData.ItemType.Glove: // ¹«±â°¡ ¾Æ´Ñ ÀåºñµéÀº °°Àº ·ÎÁ÷À» »ç¿ë
-            case ItemData.ItemType.Shoe:
-                if (level == 0) //·¹º§ÀÌ 0ÀÏ ¶§ ¹öÆ°À» ´©¸£¸é Àåºñ ¿ÀºêÁ§Æ®¸¦ »ı¼º
+                if (level-1 == data.damages.Length)
                 {
+                    GameManager.Instance.weaponPool.Remove(data.itemId);
+                    weapon.CheckEvolve();
+                }
+                break;
+                        
+            case ItemData.ItemType.Passive:
+                if (level == 0) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+                {   
                     GameObject newGear = new GameObject();
-
-                    //»õ·Î¿î ¿ÀºêÁ§Æ®¿¡ Weapon ÄÄÆ÷³ÍÆ® Ãß°¡
-                    //AddComponent ÇÔ¼ö ¹İÈ¯ °ªÀ» ¹Ì¸® ¼±¾ğÇÑ º¯¼ö¿¡ ÀúÀå.
+                    GameManager.Instance.passiveInventory.Add(data.itemId);
+                    if (GameManager.Instance.passiveInventory.Count == 6)
+                    {
+                        GameManager.Instance.passivePool = GameManager.Instance.passiveInventory;
+                    }
+                        
                     gear = newGear.AddComponent<Gear>();
                     gear.Init(data);
                 }
@@ -97,20 +108,58 @@ public class Item : MonoBehaviour
 
                     gear.LevelUp(nextRate);
                 }
-
                 level++;
+
+                Weapon[] weapons = GameManager.Instance.player.GetComponentsInChildren<Weapon>();
+
+                foreach (Weapon weapon in weapons)
+                {
+                    weapon.CheckEvolve();
+                }
+
+                if (level-1 == data.damages.Length)
+                {
+                    GameManager.Instance.passivePool.Remove(data.itemId);
+                }
+
                 break;
-            case ItemData.ItemType.Heal: // ÀÏÈ¸¼º ¾ÆÀÌÅÛÀÇ ¾È¿¡¼­´Â LevelUp ÇÔ¼ö ½ÇÇàÀ» X
+            case ItemData.ItemType.Heal: // ï¿½ï¿½È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ï¿½ï¿½ï¿½ï¿½ LevelUp ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ X
                 GameManager.Instance.health = GameManager.Instance.maxHealth;
                 break;
         }
-        // ½ºÅ©¸³Æ®ºí ¿ÀºêÁ§Æ®¿¡ ÀÛ¼ºÇÑ ·¹º§ µ¥ÀÌÅÍ °³¼ö¸¦ ³Ñ±âÁö ¾Ê°Ô ·ÎÁ÷ Ãß°¡
-        if (level == data.damages.Length)// damages¿¡ µé¾îÀÖ´Â µ¥ÀÌÅÍ °³¼ö¿Í °°¾ÆÁö¸é
-        {
-            GetComponent<Button>().interactable = false;
-        }
     }
 
-    public void Evolve() { }// ¾Æ¸¶ ¹«±â ÁøÈ­¸¦ ÇÏ¸é ÇØ´ç ÇÔ¼ö È£Ãâ
-    //Ãß°¡ÀûÀÎ »ı°¢ : ¸ğµç Àåºñ, ¹«±âµéÀº playerÀÇ ÀÚ½Ä ÄÄÆ÷³ÍÆ®·Î Ãß°¡µÈ´Ù. ±×·¸´Ù¸é data id ¸¶´Ù ÀÌ¸§Àº Ç×»ó °°´Ù. ±×·³ ÇØ´ç ±×°É Á¶°Ç ±â¾î ½Àµæ¿¡ ´ëÇÑ bool°ª ¼±¾ğ(weaponÅ¬·¡½º¿¡¼­ ½Ç½Ã), ·¹º§ÀÌ ¸¸·¾ÀÏ ‹š ÇØ´ç Å¬·¡½º¿¡¼­ ÃßÀûÇØ¼­ 2°³ÀÇ Á¶°Ç ´Ş¼º ½Ã evolve°¡ Àû¿ëµÇ°í ±×·¯¸é weaponÀÇ ÁøÈ­ÇÔ¼ö¸¦ ÅëÇØ¼­ ³ª¿À°Ô µÈ´Ù.
+    string GetItemText(int level)
+    {
+        string itemText = "";
+
+        if (level == 1 && data.damages[level - 1] != data.stat.Damage)
+            itemText += $"\në°ë¯¸ì§€ {data.damages[level - 1] * 100}% ì¦ê°€";
+        else if(level >= 2 && data.damages[level-1] != data.damages[level-2])
+            itemText += $"\në°ë¯¸ì§€ {data.damages[level - 1] * 100}% ì¦ê°€";
+
+
+        switch (data.LevelUpStatTypes[level-1])
+        {
+            case ItemData.SubStatType.AttackSpeed:
+                itemText += $"\nê³µê²©ì†ë„ {data.subStat[level-1]}% ì¦ê°€";
+                break;
+            case ItemData.SubStatType.AreaRadius:
+                itemText += $"\në²”ìœ„ê³µê²© ë²”ìœ„ {data.subStat[level-1]}% ì¦ê°€";
+                break;
+            case ItemData.SubStatType.ProjectileNum:
+                itemText += $"\níˆ¬ì‚¬ì²´ ê°œìˆ˜ {data.subStat[level - 1]}ê°œ ì¦ê°€";
+                break;
+            case ItemData.SubStatType.ProjectileSpeed:
+                itemText += $"\níˆ¬ì‚¬ì²´ ì†ë„ {data.subStat[level - 1]}% ì¦ê°€";
+                break;
+            case ItemData.SubStatType.AreaDuration:
+                itemText += $"\në²”ìœ„ê³µê²© ìœ ì§€ ì‹œê°„ {data.subStat[level - 1]}% ì¦ê°€";
+                break;
+            case ItemData.SubStatType.none:
+                break;
+        }
+
+        return itemText;
+    }
 }

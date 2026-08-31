@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,31 +7,37 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [Header("# Game Control")]
-    public bool isLive;                     //½Ã°£ Á¤Áö ¿©ºÎ
-    public float gameTime;                  //°ÔÀÓ ½Ã°£
-    public float maxGameTime = 2 * 10f;     //°ÔÀÓ ÃÖ´ë ½Ã°£ (test¿ë 20ÃÊ)
+    public bool isLive;                     //ì‹œê°„ ì •ì§€ ì—¬ë¶€
+    public float gameTime;                  //ê²Œì„ ì‹œê°„
+    public float maxGameTime = 2 * 10f;     //ê²Œì„ ìµœëŒ€ ì‹œê°„ (testìš© 20ì´ˆ)
 
     [Header("# Player Info")]
     public int playerId;
     public float health;
     public float maxHealth = 100;
-    public int level;   //·¹º§
-    public int kill;    //Å³¼ö
-    public int exp;     //°æÇèÄ¡
+    public float defense;
+    public int level;   //ë ˆë²¨
+    public int kill;    //í‚¬ìˆ˜
+    public int exp;     //ê²½í—˜ì¹˜
     public int[] nextExp = { 3, 5, 10, 100, 150, 210, 280, 360, 450, 600 };
+    public List<int> weaponInventory = new List<int>();
+    public List<int> passiveInventory = new List<int>();
+
 
     [Header("# Game Object")]
     public PoolManager pool;
+    public List<int> weaponPool = new List<int>();
+    public List<int> passivePool = new List<int>();
     public Player player;
-    public LevelUp uiLevelUp; //·¹º§¾÷ º¯¼ö ¼±¾ğ ¹× ÃÊ±âÈ­
-    public Result uiResult;   //°á°úÃ¢ ¿ÀºêÁ§Æ®
-    public Transform uiJoy;   //Á¶ÀÌ½ºÆ½ ¿ÀºêÁ§Æ®
+    public LevelUp uiLevelUp; //ë ˆë²¨ì—… ë³€ìˆ˜ ì„ ì–¸ ë° ì´ˆê¸°í™”
+    public Result uiResult;   //ê²°ê³¼ì°½ ì˜¤ë¸Œì íŠ¸
+    public Transform uiJoy;   //ì¡°ì´ìŠ¤í‹± ì˜¤ë¸Œì íŠ¸
     public GameObject enemyCleaner;
     
 
     void Awake()
     {
-        //staticÀº ÀÎ½ºÅÏ½º¿¡ ³ª¿ÀÁö ¾ÊÀ¸¹Ç·Î ÃÊ±âÈ­ ÇØÁà¾ßÇÔ
+        //staticì€ ì¸ìŠ¤í„´ìŠ¤ì— ë‚˜ì˜¤ì§€ ì•Šìœ¼ë¯€ë¡œ ì´ˆê¸°í™” í•´ì¤˜ì•¼í•¨
         Instance = this;
         Application.targetFrameRate = 60;
     }
@@ -40,10 +46,10 @@ public class GameManager : MonoBehaviour
     {
         playerId = id;
         health = maxHealth;
-
+        defense = Character.Defense;
         player.gameObject.SetActive(true);
-        uiLevelUp.Select(playerId % 2); //°í¸¥ Ä³¸¯ÅÍ¿¡ µû¶ó ±âº»¹«±â º¯°æ
-        Resume();           //Àç½ÃÀÛ ½Ã ½Ã°£ ¹è¼ÓÀ» 1·Î ¸ÂÃç ÁÖµµ·Ï start¿¡ resume È£Ãâ
+        uiLevelUp.Select(playerId % 2); //ê³ ë¥¸ ìºë¦­í„°ì— ë”°ë¼ ê¸°ë³¸ë¬´ê¸° ë³€ê²½
+        Resume();           //ì¬ì‹œì‘ ì‹œ ì‹œê°„ ë°°ì†ì„ 1ë¡œ ë§ì¶° ì£¼ë„ë¡ startì— resume í˜¸ì¶œ
 
         AudioManager.instance.PlayBgm(true);
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Select);
@@ -56,7 +62,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator GameOverRoutine()
     {
-        isLive = false; //¸ğµç ÀÛ¾÷ Á¤Áö
+        isLive = false; //ëª¨ë“  ì‘ì—… ì •ì§€
 
         yield return new WaitForSeconds(0.5f);
         
@@ -75,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator GameVictoryRoutine()
     {
-        isLive = false; //¸ğµç ÀÛ¾÷ Á¤Áö
+        isLive = false; //ëª¨ë“  ì‘ì—… ì •ì§€
 
         enemyCleaner.SetActive(true);
         yield return new WaitForSeconds(0.5f);
@@ -90,7 +96,7 @@ public class GameManager : MonoBehaviour
 
     public void GameRetry()
     {
-        SceneManager.LoadScene(0);//0¹øÂ° SceneÀ» ºÒ·¯¿Â´Ù.
+        SceneManager.LoadScene(0);//0ë²ˆì§¸ Sceneì„ ë¶ˆëŸ¬ì˜¨ë‹¤.
     }
 
     public void GameQuit()
@@ -103,10 +109,10 @@ public class GameManager : MonoBehaviour
         if (!isLive)
             return;
 
-        //DeltaTime : ÇÑ ÇÁ·¹ÀÓ¿¡ °É¸° ½Ã°£
+        //DeltaTime : í•œ í”„ë ˆì„ì— ê±¸ë¦° ì‹œê°„
         gameTime += Time.deltaTime;
 
-        //1ÃÊ¸¶´Ù Spawn ½ÇÇà
+        //1ì´ˆë§ˆë‹¤ Spawn ì‹¤í–‰
         if (gameTime > maxGameTime)
         {
             gameTime = maxGameTime;
@@ -116,7 +122,7 @@ public class GameManager : MonoBehaviour
 
     public void GetExp()
     {
-        if (!isLive) // ³¡³µÀ»¶§ °æÇèÄ¡°¡ ¿À¸£´Â »óÈ² ¹æÁö
+        if (!isLive) // ëë‚¬ì„ë•Œ ê²½í—˜ì¹˜ê°€ ì˜¤ë¥´ëŠ” ìƒí™© ë°©ì§€
             return; 
 
         exp++;
@@ -132,14 +138,14 @@ public class GameManager : MonoBehaviour
     public void Stop()
     {
         isLive = false;
-        Time.timeScale = 0; //À¯´ÏÆ¼ÀÇ ½Ã°£ ¼Óµµ(¹èÀ²)
-        uiJoy.localScale = Vector3.zero; //Á¶ÀÌ½ºÆ½ ¼û±â±â
+        Time.timeScale = 0; //ìœ ë‹ˆí‹°ì˜ ì‹œê°„ ì†ë„(ë°°ìœ¨)
+        uiJoy.localScale = Vector3.zero; //ì¡°ì´ìŠ¤í‹± ìˆ¨ê¸°ê¸°
     }
 
     public void Resume()
     {
         isLive = true;
-        Time.timeScale = 1; //À¯´ÏÆ¼ÀÇ ½Ã°£ ¼Óµµ(¹èÀ²)
-        uiJoy.localScale = Vector3.one; //Á¶ÀÌ½ºÆ½ º¸¿©ÁÖ±â
+        Time.timeScale = 1; //ìœ ë‹ˆí‹°ì˜ ì‹œê°„ ì†ë„(ë°°ìœ¨)
+        uiJoy.localScale = Vector3.one; //ì¡°ì´ìŠ¤í‹± ë³´ì—¬ì£¼ê¸°
     }
 }

@@ -1,16 +1,23 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Item",menuName = "Scriptable Object/ItemData")]
 public class ItemData : ScriptableObject
 {
-    //¹«±â Å¸ÀÔ : ±Ù°Å¸®, ¿ø°Å¸®, Àå°©, ½Å¹ß, Èú
-    public enum ItemType { Melee, Range, Glove, Shoe, Heal }
+    //ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ : ï¿½Ù°Å¸ï¿½, ï¿½ï¿½ï¿½Å¸ï¿½, ï¿½å°©, ï¿½Å¹ï¿½, ï¿½ï¿½
+    public enum ItemType { Melee, Range, Passive, Heal }
+    public enum GearType { AsGlove, SpeedBoots, HealthUp, Defense, AttackUp, AreaRadius, AreaTime, ProjectileCount, ProjectileSpeedUp, None }
+    public enum SubStatType { AttackSpeed , AreaRadius, AreaDuration, ProjectileNum, ProjectileSpeed, none }
 
-    // ¾ÆÀÌÅÛÀÇ °¢Á¾ ¼Ó¼ºµéÀ» º¯¼ö·Î ÀÛ¼º
+    [Header("# Basic Info")]
+    public WeaponStat stat;
+
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û¼ï¿½(countï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½Ä¡)
     [Header("# Main Info ")]
     public ItemType itemType;
+    public GearType gearType;
+
     public int itemId;
     public string itemName;
     public bool isRandomPlace;
@@ -19,16 +26,16 @@ public class ItemData : ScriptableObject
     public string itemDesc;
     public Sprite itemIcon;
 
-    [Header("# Level Data")]
-    public float baseDamage;//ÃÊ±â µ¥¹ÌÁö
-    public int baseCount;   //ÃÊ±â Ä«¿îÆ®
-    public float[] damages; //·¹º§ ¾÷ µ¥¹ÌÁö
-    public int[] counts;    //·¹º§ ¾÷ Ä«¿îÆ®
+    [Header("# Level Data")]  
+    public float[] damages; 
+    public int[] subStat;    
+    public SubStatType[] LevelUpStatTypes;
 
     [Header("# Weapon")]
     public GameObject projectile;
     public Sprite hand;
 
     [Header("# EvolveItemData")]
+    public int evolvePassiveId;
     public ItemData evolveData;
 }

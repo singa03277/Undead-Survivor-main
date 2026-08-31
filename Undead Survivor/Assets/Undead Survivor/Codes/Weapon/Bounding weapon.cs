@@ -1,25 +1,26 @@
-using UnityEditor.ShaderGraph;
+﻿using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 public class Boundingweapon : MonoBehaviour
 {
-    private float damage;
     private float bounceCount;
     private bool isKnockBack;
-    private Rigidbody2D rb;
     private bool isEvolved = false;
+
+    Rigidbody2D rb;
+    WeaponStat stat;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void init(float damage, float boundCount,Vector3 dir, bool isKnockBack, bool isEvolved)
+    public void init(WeaponStat stat ,Vector3 dir, bool isKnockBack, bool isEvolved)
     {
-        this.damage= damage;
-        this.bounceCount= boundCount;
+        this.stat = stat;
+        this.bounceCount = 5;
         this.isKnockBack= isKnockBack;
         this.isEvolved = isEvolved;
-        rb.linearVelocity = dir * 15f;
+        rb.linearVelocity = dir * stat.ProjectileSpeed;
     }
 
 
@@ -40,14 +41,14 @@ public class Boundingweapon : MonoBehaviour
                 normal = diff.y > 0 ? Vector2.up : Vector2.down;
             }
 
-            rb.linearVelocity = Vector2.Reflect(Refdir, normal).normalized * 15f;
+            rb.linearVelocity = Vector2.Reflect(Refdir, normal).normalized * stat.ProjectileSpeed;
             bounceCount--;
         }
 
         if (collision.CompareTag("Enemy") && isEvolved == false)
         {
             Enemy hitEnemy = collision.GetComponent<Enemy>();
-            hitEnemy.TakeDamage(damage, gameObject.tag, isKnockBack);
+            hitEnemy.TakeDamage(stat.Damage, gameObject.tag, isKnockBack);
         }
         else if(collision.CompareTag("Enemy") && isEvolved == true)
         {
@@ -55,7 +56,7 @@ public class Boundingweapon : MonoBehaviour
             foreach (RaycastHit2D scanEnemy in Enemys)
             {
                 Enemy enemy = scanEnemy.collider.GetComponent<Enemy>();
-                enemy.TakeDamage(damage, gameObject.tag, isKnockBack);
+                enemy.TakeDamage(stat.Damage, gameObject.tag, isKnockBack);
             }
         }
     }

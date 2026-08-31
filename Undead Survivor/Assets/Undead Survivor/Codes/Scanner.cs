@@ -49,10 +49,8 @@ public class Scanner : MonoBehaviour
     }
     Vector3 GetRandom()
     {
-        float height = Camera.main.orthographicSize * 2f;
-        float width = height * Camera.main.aspect;
-        Vector3 result = new Vector3(Random.Range(-width / 2f, width / 2f), Random.Range(-height / 2f, height / 2f));
-        return result;
+        Vector3 targetAngle = Quaternion.Euler(0, 0, Random.Range(0, 360)) * Vector3.right;
+        return targetAngle;
     }
 
 }

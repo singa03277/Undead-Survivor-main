@@ -61,10 +61,10 @@ public class Player : MonoBehaviour
     {
         if (!GameManager.Instance.isLive) //살아있을때만 실행
             return;
-
+        //tmp defense function
         if (!collision.gameObject.CompareTag("Screen"))
-        {
-            GameManager.Instance.health -= Time.deltaTime * 10;
+        { 
+            GameManager.Instance.health -= Time.deltaTime * (10 - GameManager.Instance.defense);
         }
         
 

@@ -1,11 +1,12 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Gear : MonoBehaviour
 {
-    public ItemData.ItemType type;
+    public ItemData.GearType GearType;
     public float rate;
+
 
     public void Init(ItemData data)
     {
@@ -15,55 +16,135 @@ public class Gear : MonoBehaviour
         transform.localPosition = Vector3.zero;
 
         //Property Set
-        type = data.itemType;
-        rate = data.damages[0]; //GearÀÇ ÁÖ¿ä rate´Â damages¿¡ ÀúÀå Áß
+        GearType = data.gearType;
+        rate = data.damages[0]; //Gearì˜ ì£¼ìš” rateëŠ” damagesì— ì €ì¥ ì¤‘
 
-        ApplyGear(); //±â¾î°¡ Ã³À½ »ı¼ºµÉ ¶§ ·ÎÁ÷ Àû¿ë ÇÔ¼ö¸¦ È£Ãâ
+        ApplyGear(); //ê¸°ì–´ê°€ ì²˜ìŒ ìƒì„±ë  ë•Œ ë¡œì§ ì ìš© í•¨ìˆ˜ë¥¼ í˜¸ì¶œ
     }
     
     public void LevelUp(float rate)
     {
         this.rate = rate;
-        ApplyGear();    //·¹º§¾÷ ÇÒ ¶§ ·ÎÁ÷ Àû¿ë ÇÔ¼ö¸¦ È£Ãâ
+        ApplyGear();    //ë ˆë²¨ì—… í•  ë•Œ ë¡œì§ ì ìš© í•¨ìˆ˜ë¥¼ í˜¸ì¶œ
     }
 
-    void ApplyGear() //Å¸ÀÔ¿¡ µû¶ó ÀûÀıÇÏ°Ô ·ÎÁ÷À» Àû¿ë ½ÃÄÑÁÖ´Â ÇÔ¼ö Ãß°¡
+    void ApplyGear() //íƒ€ì…ì— ë”°ë¼ ì ì ˆí•˜ê²Œ ë¡œì§ì„ ì ìš© ì‹œì¼œì£¼ëŠ” í•¨ìˆ˜ ì¶”ê°€
     {
-        switch(type)
+        switch(GearType)
         {
-            case ItemData.ItemType.Glove:
+            case ItemData.GearType.AsGlove:
                 RateUp();
                 break;
-            case ItemData.ItemType.Shoe:
+            case ItemData.GearType.SpeedBoots:
                 SpeedUp();
+                break;
+            case ItemData.GearType.HealthUp:
+                HealthUp();
+                break;
+            case ItemData.GearType.Defense:
+                DefenseUp();
+                break;
+            case ItemData.GearType.AttackUp:
+                AttackUp();
+                break;
+            case ItemData.GearType.AreaRadius:
+                AreaRadiusUp();
+                break;
+            case ItemData.GearType.AreaTime:
+                AreaTimeUp();
+                break;
+            case ItemData.GearType.ProjectileCount:
+                ProjectileCountUp();
+                break;
+            case ItemData.GearType.ProjectileSpeedUp:
+                ProjectileSpeedUp();
                 break;
         }
     }
 
-    void RateUp() //Àå°©ÀÇ ±â´ÉÀÎ ¿¬»ç·ÂÀ» ¿Ã¸®´Â ÇÔ¼ö
+    void WeaponStatUp()
     {
-        // ºÎ¸ğ·Î ¿Ã¶ó°¡¼­ ÀÚ½ÄµéÀÇ Weapon ÄÄÆ÷³ÍÆ®µéÀ» ´Ù °¡Á®¿Â´Ù.
+
+    }
+
+    void RateUp() //ì¥ê°‘ì˜ ê¸°ëŠ¥ì¸ ì—°ì‚¬ë ¥ì„ ì˜¬ë¦¬ëŠ” í•¨ìˆ˜
+    {
+        // ë¶€ëª¨ë¡œ ì˜¬ë¼ê°€ì„œ ìì‹ë“¤ì˜ Weapon ì»´í¬ë„ŒíŠ¸ë“¤ì„ ë‹¤ ê°€ì ¸ì˜¨ë‹¤.
         Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-        //¹«±â ÇÏ³ª¾¿ ¼øÈ¸ÇÏ¸é¼­ Å¸ÀÔ¿¡ µû¶ó speed °ª º¯°æ
+        //ë¬´ê¸° í•˜ë‚˜ì”© ìˆœíšŒí•˜ë©´ì„œ íƒ€ì…ì— ë”°ë¼ speed ê°’ ë³€ê²½
         foreach(Weapon weapon in weapons)
         {
             switch (weapon.id)
             {
-                case 0: //±Ù°Å¸® ¹«±âÀÇ °æ¿ì
+                case 0: //ê·¼ê±°ë¦¬ ë¬´ê¸°ì˜ ê²½ìš°
                     float speed = 150 * Character.WeaponSpeed;
-                    weapon.speed = speed + (speed * rate); // È¸Àü ¼Óµµ¸¦ Áõ°¡
+                    weapon.stat.AttackSpeed = speed + (speed * rate); // íšŒì „ ì†ë„ë¥¼ ì¦ê°€
                     break;
-                default: //¿ø°Å¸® ¹«±âÀÇ °æ¿ì
-                    weapon.speed = weapon.speed * (1f - rate);  // ¹«Á¶°Ç °ø°İ¼Óµµ Å×ÀÌºí¿¡¼­´Â ¼Ò¼öÁ¡À¸·Î Áà¾ßÇÔ - ±×·¯Áö ¾ÊÀ¸¸é -·Î ³Ñ¾î°¡°Ô µÊ. 
+                default: //ì›ê±°ë¦¬ ë¬´ê¸°ì˜ ê²½ìš°
+                    weapon.stat.AttackSpeed = weapon.stat.AttackSpeed * (1f - rate);  // ë¬´ì¡°ê±´ ê³µê²©ì†ë„ í…Œì´ë¸”ì—ì„œëŠ” ì†Œìˆ˜ì ìœ¼ë¡œ ì¤˜ì•¼í•¨ - ê·¸ëŸ¬ì§€ ì•Šìœ¼ë©´ -ë¡œ ë„˜ì–´ê°€ê²Œ ë¨. 
                     break;
             }
-
         }
     }
 
     void SpeedUp()
     {
-        float speed = 3 * Character.Speed; //±âº» ÀÌµ¿¼Óµµ
-        GameManager.Instance.player.speed = speed + speed * rate; //ÇÃ·¹ÀÌ¾îÀÇ ÀÌµ¿¼Óµµ Áõ°¡
+        float speed = 3 * Character.Speed; //ê¸°ë³¸ ì´ë™ì†ë„
+        GameManager.Instance.player.speed = speed + speed * rate; //í”Œë ˆì´ì–´ì˜ ì´ë™ì†ë„ ì¦ê°€
+    }
+
+    void HealthUp()
+    {
+        GameManager.Instance.maxHealth += (GameManager.Instance.maxHealth * rate);
+    }
+
+    void DefenseUp()
+    {
+        GameManager.Instance.defense += rate;
+    }
+
+    void AttackUp()
+    {
+        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
+        foreach (Weapon weapon in weapons)
+        {
+            weapon.stat.Damage += (weapon.stat.Damage * rate);
+        }
+    }
+
+    void AreaRadiusUp()
+    {
+        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
+        foreach (Weapon weapon in weapons)
+        {
+            weapon.stat.AreaRadius += (weapon.stat.AreaRadius * rate);
+        }
+    }
+
+    void AreaTimeUp()
+    {
+        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
+        foreach (Weapon weapon in weapons)
+        {
+            weapon.stat.Duration += (weapon.stat.Duration* rate);
+        }
+    }
+
+    void ProjectileCountUp()
+    {
+        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
+        foreach (Weapon weapon in weapons)
+        {
+            weapon.stat.AreaRadius += (weapon.stat.ProjectileNum * rate);
+        }
+    }
+
+    void ProjectileSpeedUp()
+    {
+        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
+        foreach (Weapon weapon in weapons)
+        {
+            weapon.stat.ProjectileSpeed += (weapon.stat.ProjectileSpeed * rate);
+        }
     }
 }
