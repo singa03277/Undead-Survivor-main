@@ -3,19 +3,21 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
+    Vector2 PlayerDir;
+    Vector3 offset;
+    float WeaponTime;
+    float WeaponTimer = 0f;
+    float WaitTime;
+    float WaitTimer = 0f;
+    bool isWeaponTime = false;
+    bool isEvolved = false;
+    bool isKnockBack;
 
-    private Vector2 PlayerDir;
-    private SpriteRenderer Sprite;
-    private CapsuleCollider2D Colli;
-    private Player play;
-    private float WeaponTimer = 0f;
-    private float WeaponTime = 3f;
-    private float WaitTime = 5f;
-    private float WaitTimer = 0f;
-    private bool isWeaponTime = false;
-    private Vector3 offset;
-    private bool isEvolved = false;
-    private float damage;
+    SpriteRenderer Sprite;
+    CapsuleCollider2D Colli;
+    Player play;
+    WeaponStat stat;
+
     void Awake()
     {
         Sprite = GetComponent<SpriteRenderer>();
@@ -23,12 +25,15 @@ public class Laser : MonoBehaviour
         play = GameManager.Instance.player.GetComponent<Player>();
     }
 
-    public void init(float damage, float WeaponTime, bool isEvolved)
+    public void init(WeaponStat stat, bool isKnockBack ,bool isEvolved)
     {
-        this.damage = damage;
-        this.WeaponTime = WeaponTime;
-        isWeaponTime = true;
+        this.stat = stat;
         this.isEvolved = isEvolved;
+        this.isKnockBack = isKnockBack;
+        WeaponTime = stat.Duration;
+        WaitTime = stat.AttackSpeed;
+
+        isWeaponTime = true;
     }
     private void FixedUpdate()
     {
@@ -61,6 +66,18 @@ public class Laser : MonoBehaviour
 
         PlayerDir = play.inputVec.normalized;
         LaserDir();
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!collision.CompareTag("Enemy"))
+            return;
+
+        if (collision.CompareTag("Enemy"))
+        {
+            Enemy hitEnemy = collision.GetComponent<Enemy>();
+            hitEnemy.TakeDamage(stat.Damage, gameObject.tag, isKnockBack);
+        }
     }
 
     void LaserDir()

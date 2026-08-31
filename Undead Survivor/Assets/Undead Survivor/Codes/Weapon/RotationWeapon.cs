@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class RotationWeapon : MonoBehaviour
 {
-    public float damage;
     private bool isKnockBack;
-    public void init(float damage, bool isKnockBack)
+    private WeaponStat stat;
+    public void init(WeaponStat stat, bool isKnockBack)
     {
-        this.damage = damage;
+        this.stat = stat;
         this.isKnockBack = isKnockBack;
     }
     void OnTriggerEnter2D(Collider2D collision)
@@ -15,6 +15,6 @@ public class RotationWeapon : MonoBehaviour
             return;
 
         Enemy hitEnemy = collision.GetComponent<Enemy>();
-        hitEnemy.TakeDamage(damage, gameObject.tag, isKnockBack);
+        hitEnemy.TakeDamage(stat.Damage, gameObject.tag, isKnockBack);
     }
 }

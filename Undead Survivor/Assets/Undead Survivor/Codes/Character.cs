@@ -24,4 +24,9 @@ public class Character : MonoBehaviour
     {
         get { return GameManager.Instance.playerId == 3 ? 1 : 0; }
     }
+
+    public static float Defense
+    {
+        get { return 1f; }
+    }
 }

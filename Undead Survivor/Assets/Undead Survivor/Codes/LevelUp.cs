@@ -1,20 +1,30 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Search;
 using UnityEngine;
 
 public class LevelUp : MonoBehaviour
 {
     RectTransform rect;
     Item[] items;
-
-    // Start is called before the first frame update
+    Item[] consumeItems;
+    
     void Awake()
     {
         rect = GetComponent<RectTransform>();
-        items = GetComponentsInChildren<Item>(true); // true¸é ºñÈ°¼ºÈ­ µÈ item ÄÄÆ÷³ÍÆ®µµ °¡Á®¿Â´Ù.
+        items = GetComponentsInChildren<Item>(true); // trueë©´ ë¹„í™œì„±í™” ëœ item ì»´í¬ë„ŒíŠ¸ë„ ê°€ì ¸ì˜¨ë‹¤.
+        consumeItems = items.Where(x => x.isConsumable).ToArray();
+
     }
 
-    //·¹º§¾÷ Ã¢À» º¸¿©ÁÖ´Â ÇÔ¼ö
+    private void Start()
+    {
+        GameManager.Instance.weaponPool = items.Where(x => x.data.itemType == ItemData.ItemType.Melee || x.data.itemType == ItemData.ItemType.Range).Select(x => x.data.itemId).ToList();
+
+        GameManager.Instance.passivePool = items.Where(x => x.data.itemType == ItemData.ItemType.Passive).Select(x => x.data.itemId).ToList();
+    }
+
     public void Show()
     {
         Next();
@@ -24,7 +34,6 @@ public class LevelUp : MonoBehaviour
         AudioManager.instance.EffectBgm(true);
     }
 
-    //·¹º§¾÷ Ã¢À» ¼û±â´Â ÇÔ¼ö
     public void Hide()
     {
         rect.localScale = Vector3.zero;
@@ -40,38 +49,40 @@ public class LevelUp : MonoBehaviour
 
     void Next()
     {
-        //1. ¸ğµç ¾ÆÀÌÅÛ ºñÈ°¼ºÈ­
+        //1. ëª¨ë“  ì•„ì´í…œ ë¹„í™œì„±í™”
         foreach(Item item in items)
         {
-            item.gameObject.SetActive(false); //item ÄÄÆ÷³ÍÆ®ÀÇ °ÔÀÓ¿ÀºêÁ§Æ®·Î ³Ñ¾î°¡ ºñÈ°¼ºÈ­
+            item.gameObject.SetActive(false); //item ì»´í¬ë„ŒíŠ¸ì˜ ê²Œì„ì˜¤ë¸Œì íŠ¸ë¡œ ë„˜ì–´ê°€ ë¹„í™œì„±í™”
         }
+        List<int> selectList = new List<int>();
+        selectList.AddRange(GameManager.Instance.weaponPool);
+        selectList.AddRange(GameManager.Instance.passivePool);
 
-        //2. ·£´ı ¾ÆÀÌÅÛ 3°³ È°¼ºÈ­
-        int[] ran = new int[3];
-        while (true)
+        List<int> randomList = new List<int>(selectList);
+
+        for(int i=0;i<3 ; i++)
         {
-            ran[0] = Random.Range(0, items.Length);
-            ran[1] = Random.Range(0, items.Length);
-            ran[2] = Random.Range(0, items.Length);
+            int ranIndex = Random.Range(0, randomList.Count);
+            int selectItemId = randomList[ranIndex];
 
-            if (ran[0] != ran[1] && ran[1] != ran[2] && ran[2] != ran[0])
-                break;
-        }
-
-        for(int i=0;i<ran.Length;i++)
-        {
-            Item ranItem = items[ran[i]];
-
-            //3. ¸¸·¾ ¾ÆÀÌÅÛÀÇ °æ¿ì´Â ¼Òºñ ¾ÆÀÌÅÛÀ¸·Î ´ëÃ¼
-            if (ranItem.level == ranItem.data.damages.Length)
+            randomList.RemoveAt(ranIndex);
+            Item ranItem = items.First(x => x.data.itemId == selectItemId);
+            if (ranItem.level-1 == ranItem.data.damages.Length)
             {
-                items[4].gameObject.SetActive(true);
+                //consumeItems[SelectRanItem(consumeItems)].gameObject.SetActive(true);
             }
             else
             {
                 ranItem.gameObject.SetActive(true);
             }
+
         }
-        
     }
+    int SelectRanItem(Item[] itemArray)
+    {
+        int index = Random.Range(0, itemArray.Length);
+        return index;
+    }
+
 }
+

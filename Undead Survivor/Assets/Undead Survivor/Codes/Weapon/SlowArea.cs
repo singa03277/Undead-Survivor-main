@@ -1,26 +1,30 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SlowArea : MonoBehaviour
 {
-    private float radius;
-    private bool isEvolved = false;
-    private float stunTimer = 3f;
-    private float stunTime = 0f;
+    float radius;
+    float stunTimer = 0f;
+    float stunTime;
     public float slowPer;
+    bool isEvolved = false;
 
-    private CircleCollider2D cirCollider;
+    WeaponStat stat;
+    CircleCollider2D cirCollider;
 
     private void Awake()
     {
         cirCollider = GetComponent<CircleCollider2D>();
     }
 
-    public void init(float radius, float slowPer, bool isEvolved)
+    public void init(WeaponStat stat, bool isEvolved)
     {
-        this.radius = radius;
-        this.slowPer = slowPer;
-        cirCollider.radius = radius;
+        this.stat = stat;
+        this.radius = stat.AreaRadius;
+        this.slowPer = stat.Damage;
         this.isEvolved = isEvolved;
+
+        cirCollider.radius = radius;
+        stunTime = stat.AttackSpeed;
     }
 
     private void FixedUpdate()
@@ -34,10 +38,6 @@ public class SlowArea : MonoBehaviour
             Debug.Log(Enemys.Length);
             foreach (RaycastHit2D scanEnemy in Enemys)
             {
-                Debug.Log(scanEnemy.collider.name);
-
-                Debug.Log(scanEnemy.collider.GetComponent<Enemy>());
-                Debug.Log(scanEnemy.collider.GetComponent<EnemyStatus>());
                 EnemyStatus enemy = scanEnemy.collider.GetComponent<EnemyStatus>();
                 enemy.stun(2);
             }

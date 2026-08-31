@@ -2,21 +2,24 @@ using UnityEngine;
 
 public class FrontAttack : MonoBehaviour
 {
-    private float damage;
-    private float AttackTime = 1f;
-    private float AttackTimer = 0f;
-    private float RotateTime = 0.333f;
-    private float RotateTimer = 0f;
-    private bool IsAttack = false;
-    private bool isRight = false;
-    private Player play;
-    private Vector2 PlayerDir;
-    private Vector3 Offset;
-    private Vector3 StartAngle;
-    public void init(float damage, bool isRight)
+    float AttackTime;
+    float AttackTimer = 0f;
+    float RotateTime = 0.333f;
+    float RotateTimer = 0f;
+    bool IsAttack = false;
+    bool isRight = false;
+    bool isKnockBack;
+    WeaponStat stat;
+    Player play;
+    Vector2 PlayerDir;
+    Vector3 Offset;
+    Vector3 StartAngle;
+    public void init(WeaponStat stat, bool isKnockBack, bool isRight)
     {
-        this.damage = damage;
+        this.stat = stat;
+        this.isKnockBack = isKnockBack;
         this.isRight = isRight;
+        AttackTime = stat.AttackSpeed;
     }
     private void Awake()
     {
@@ -61,6 +64,17 @@ public class FrontAttack : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!collision.CompareTag("Enemy"))
+            return;
+
+        if (collision.CompareTag("Enemy"))
+        {
+            Enemy hitEnemy = collision.GetComponent<Enemy>();
+            hitEnemy.TakeDamage(stat.Damage, gameObject.tag, isKnockBack);
+        }
+    }
 
     void AttackDir()
     {
@@ -73,5 +87,3 @@ public class FrontAttack : MonoBehaviour
         transform.position = play.transform.position + Offset;
     }
 }
-
-//돌아가는 각도 조절하기
