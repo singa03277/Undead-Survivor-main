@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: SlowArea
   m_EditorClassIdentifier: 
   stat:
-    Damage: 0
+    Damage: 0.2
     AttackSpeed: 0
-    AreaRadius: 0
+    AreaRadius: 3
     Duration: 0
     ProjectileNum: 0
     ProjectileSpeed: 0
-    count: 0
   itemType: 1
   gearType: 0
   itemId: 3
@@ -29,10 +28,13 @@ MonoBehaviour:
   itemDesc: "\uC8FC\uBCC0 \uC801\uC774 \uB290\uB824\uC9C4\uB2E4"
   itemIcon: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   damages:
-  - 20
-  - 20
-  subStat: 
-  LevelUpStatTypes: 
+  - 0.2
+  - 0.2
+  subStat:
+  - 0
+  - 0
+  LevelUpStatTypes: 0000000000000000
   projectile: {fileID: 8462740780204974709, guid: dd26841da67f4ee4490553b71ca19a53, type: 3}
   hand: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
-  evolveData: {fileID: 0}
+  evolvePassiveId: 18
+  evolveData: {fileID: 11400000}

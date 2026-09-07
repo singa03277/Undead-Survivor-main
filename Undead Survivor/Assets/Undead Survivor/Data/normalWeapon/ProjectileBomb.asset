@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: ProjectileBomb
   m_EditorClassIdentifier: 
   stat:
-    Damage: 0
-    AttackSpeed: 0
-    AreaRadius: 0
+    Damage: 30
+    AttackSpeed: 1
+    AreaRadius: 1.5
     Duration: 0
-    ProjectileNum: 0
-    ProjectileSpeed: 0
-    count: 0
+    ProjectileNum: 1
+    ProjectileSpeed: 10
   itemType: 1
   gearType: 0
   itemId: 5
@@ -30,10 +29,13 @@ MonoBehaviour:
     \uD3ED\uD0C4\uC744 \uBC1C\uC0AC"
   itemIcon: {fileID: -38345435, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   damages:
-  - 2
-  - 3
-  subStat: 0000000000000000
-  LevelUpStatTypes: 0000000000000000
+  - 0.1
+  - 0.1
+  subStat:
+  - 0.1
+  - 0.2
+  LevelUpStatTypes: 0100000000000000
   projectile: {fileID: 8462740780204974709, guid: 23b5ebf7be4ad154a8ab806d405f8a86, type: 3}
   hand: {fileID: 154122315, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
-  evolveData: {fileID: 0}
+  evolvePassiveId: 20
+  evolveData: {fileID: 11400000}

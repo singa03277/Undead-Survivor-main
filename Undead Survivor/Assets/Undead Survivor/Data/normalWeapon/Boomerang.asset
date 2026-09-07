@@ -13,15 +13,14 @@ MonoBehaviour:
   m_Name: Boomerang
   m_EditorClassIdentifier: 
   stat:
-    Damage: 1
+    Damage: 50
     AttackSpeed: 0.5
     AreaRadius: 0
     Duration: 0
     ProjectileNum: 0
     ProjectileSpeed: 10
-    count: 1
   itemType: 1
-  gearType: 0
+  gearType: 9
   itemId: 10
   itemName: "\uBD80\uBA54\uB791"
   isRandomPlace: 0
@@ -31,10 +30,13 @@ MonoBehaviour:
     \uB418\uB3CC\uC544\uAC04\uB2E4."
   itemIcon: {fileID: -38345435, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   damages:
-  - 2
-  - 3
-  subStat: 
-  LevelUpStatTypes: 
+  - 0.2
+  - 0.2
+  subStat:
+  - 0.2
+  - 0.3
+  LevelUpStatTypes: 0400000004000000
   projectile: {fileID: 8462740780204974709, guid: 7e704b5f44f76bb4eb8b5c6d1cedebf1, type: 3}
   hand: {fileID: 154122315, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
-  evolveData: {fileID: 0}
+  evolvePassiveId: 19
+  evolveData: {fileID: 11400000}

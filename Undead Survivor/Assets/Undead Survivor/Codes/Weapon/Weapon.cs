@@ -211,7 +211,7 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
     void SpawnFront()
     {
 
-        front = GameManager.Instance.pool.Get(prefabId).transform;
+        Transform front = GameManager.Instance.pool.Get(prefabId).transform;
         front.parent = transform;
         front.localPosition = Vector3.zero;
         front.localRotation = Quaternion.identity;
