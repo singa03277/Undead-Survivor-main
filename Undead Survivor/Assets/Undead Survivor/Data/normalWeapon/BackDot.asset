@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BackDot
   m_EditorClassIdentifier: 
   stat:
-    Damage: 15
-    AttackSpeed: 0.5
+    Damage: 0.4
+    AttackSpeed: 1
     AreaRadius: 2
     Duration: 2
     ProjectileNum: 0

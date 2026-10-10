@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
@@ -100,7 +100,7 @@ public class EnemyStatus : MonoBehaviour
             if (!addStatus(enemyStatus.slow))
                 return;
                 
-            enemy.calcuspeed = enemy.speed * (collision.GetComponent<SlowArea>().slowPer / 100);
+            enemy.calcuspeed = enemy.speed * (1 - collision.GetComponent<SlowArea>().slowPer);
         }
     }
 
@@ -139,7 +139,6 @@ public class EnemyStatus : MonoBehaviour
 
     public void stun(float stunTime)
     {
-        Debug.Log("stun");
         StartCoroutine(stunRoutine(stunTime));
     }
 

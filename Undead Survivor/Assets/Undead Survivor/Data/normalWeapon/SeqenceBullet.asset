@@ -18,7 +18,7 @@ MonoBehaviour:
     AreaRadius: 0
     Duration: 0
     ProjectileNum: 3
-    ProjectileSpeed: 7
+    ProjectileSpeed: 3
   itemType: 1
   gearType: 0
   itemId: 4
