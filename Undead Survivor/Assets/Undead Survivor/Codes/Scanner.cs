@@ -1,47 +1,47 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 public class Scanner : MonoBehaviour
 {
-    public float scanRange;         //½ºÄµ ¹üÀ§¸¦ ÁöÁ¤
-    public LayerMask targetLayer;   //½ºÄµÇÒ ·¹ÀÌ¾î
-    public RaycastHit2D[] targets;  //½ºÄµ °á°ú ¹è¿­
-    public Transform nearestTarget; //°¡Àå °¡±î¿î ¸ñÇ¥
+    public float scanRange;         //ìŠ¤ìº” ë²”ìœ„ë¥¼ ì§€ì •
+    public LayerMask targetLayer;   //ìŠ¤ìº”í•  ë ˆì´ì–´
+    public RaycastHit2D[] targets;  //ìŠ¤ìº” ê²°ê³¼ ë°°ì—´
+    public Transform nearestTarget; //ê°€ì¥ ê°€ê¹Œìš´ ëª©í‘œ
     public Vector3 randomTarget;
     void FixedUpdate()
     {
-        // ¿øÇüÀÇ Ä³½ºÆ®¸¦ ½î°í ¸ğµç °á°ú¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö 
-        //¿ì¸®ÀÇ ¸ñÀû? ÇÃ·¹ÀÌ¾î¸¦ Áß½ÉÀ¸·Î ¿øÀ¸·Î °´Ã¼¸¦ Å½»ö
+        // ì›í˜•ì˜ ìºìŠ¤íŠ¸ë¥¼ ì˜ê³  ëª¨ë“  ê²°ê³¼ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ 
+        //ìš°ë¦¬ì˜ ëª©ì ? í”Œë ˆì´ì–´ë¥¼ ì¤‘ì‹¬ìœ¼ë¡œ ì›ìœ¼ë¡œ ê°ì²´ë¥¼ íƒìƒ‰
         targets = Physics2D.CircleCastAll(transform.position, scanRange, Vector2.zero, 0, targetLayer);
-        //CircleCastAll     (1.Ä³½ºÆÃ ½ÃÀÛÀ§Ä¡, 
-        //                   2. ¿øÀÇ ¹İÁö¸§, 
-        //                   3. Ä³½ºÆÃ ¹æÇâ,  => Áö±İ ¿ì¸®´Â Æ¯Á¤ ¹æÇâÀ¸·Î Ä³½ºÆ®¸¦ ½î´Â °ÍÀÌ ¸ñÀûÀÌ ¾Æ´Ï¹Ç·ÎVector2.zero »ç¿ë
-        //                   4. Ä³½ºÆÃ ±æÀÌ,  => Ä³½ºÆÃÀ» ½î´Â °ÍÀÌ ¸ñÀûÀÌ ¾Æ´Ï¶ó ±æÀÌ°¡ 0 
-        //                   5. ´ë»ó ·¹ÀÌ¾î) 
+        //CircleCastAll     (1.ìºìŠ¤íŒ… ì‹œì‘ìœ„ì¹˜, 
+        //                   2. ì›ì˜ ë°˜ì§€ë¦„, 
+        //                   3. ìºìŠ¤íŒ… ë°©í–¥,  => ì§€ê¸ˆ ìš°ë¦¬ëŠ” íŠ¹ì • ë°©í–¥ìœ¼ë¡œ ìºìŠ¤íŠ¸ë¥¼ ì˜ëŠ” ê²ƒì´ ëª©ì ì´ ì•„ë‹ˆë¯€ë¡œVector2.zero ì‚¬ìš©
+        //                   4. ìºìŠ¤íŒ… ê¸¸ì´,  => ìºìŠ¤íŒ…ì„ ì˜ëŠ” ê²ƒì´ ëª©ì ì´ ì•„ë‹ˆë¼ ê¸¸ì´ê°€ 0 
+        //                   5. ëŒ€ìƒ ë ˆì´ì–´) 
         nearestTarget = GetNearest();
         
         randomTarget = GetRandom();
     }
 
-    //°¡Àå °¡±î¿î ¿ÀºêÁ§Æ®ÀÇ TransformÀ» ¹İÈ¯ ½ÃÄÑÁÙ ÇÔ¼ö
+    //ê°€ì¥ ê°€ê¹Œìš´ ì˜¤ë¸Œì íŠ¸ì˜ Transformì„ ë°˜í™˜ ì‹œì¼œì¤„ í•¨ìˆ˜
     Transform GetNearest()
     {
         Transform result = null;
-        float diff = 100; //ÇÃ·¹ÀÌ¾î¿ÍÀÇ °Å¸®
+        float diff = 100; //í”Œë ˆì´ì–´ì™€ì˜ ê±°ë¦¬
 
-        //foreach ¹®À¸·Î Ä³½ºÆÃ °á¿Í ¿ÀºêÁ§Æ®¸¦ ÇÏ³ª¾¿ ¹æ¹®
+        //foreach ë¬¸ìœ¼ë¡œ ìºìŠ¤íŒ… ê²°ì™€ ì˜¤ë¸Œì íŠ¸ë¥¼ í•˜ë‚˜ì”© ë°©ë¬¸
         foreach (RaycastHit2D target in targets)
-        {  //CircleCastAll¿¡ ¸ÂÀº ¾ÖµéÀ» ÇÏ³ª¾¿ Á¢±Ù
-            Vector3 myPos = transform.position;             //ÇÃ·¹ÀÌ¾î À§Ä¡
-            Vector3 targetPos = target.transform.position;  //Å¸°ÙÀÇ À§Ä¡
-            float curDiff = Vector3.Distance(myPos, targetPos); //°Å¸®¸¦ ±¸ÇÑ´Ù.
+        {  //CircleCastAllì— ë§ì€ ì• ë“¤ì„ í•˜ë‚˜ì”© ì ‘ê·¼
+            Vector3 myPos = transform.position;             //í”Œë ˆì´ì–´ ìœ„ì¹˜
+            Vector3 targetPos = target.transform.position;  //íƒ€ê²Ÿì˜ ìœ„ì¹˜
+            float curDiff = Vector3.Distance(myPos, targetPos); //ê±°ë¦¬ë¥¼ êµ¬í•œë‹¤.
 
-            if (curDiff < diff) //ÃÖ¼Ò °Å¸®¸¦ ÀúÀå
+            if (curDiff < diff) //ìµœì†Œ ê±°ë¦¬ë¥¼ ì €ì¥
             {
                 diff = curDiff;
-                result = target.transform; //°á°ú´Â °¡Àå °¡±î¿î Å¸°ÙÀÇ transformÀ¸·Î ÁöÁ¤
+                result = target.transform; //ê²°ê³¼ëŠ” ê°€ì¥ ê°€ê¹Œìš´ íƒ€ê²Ÿì˜ transformìœ¼ë¡œ ì§€ì •
             }
 
         }
@@ -52,5 +52,4 @@ public class Scanner : MonoBehaviour
         Vector3 targetAngle = Quaternion.Euler(0, 0, Random.Range(0, 360)) * Vector3.right;
         return targetAngle;
     }
-
 }

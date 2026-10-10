@@ -21,7 +21,7 @@ public class Bullet : MonoBehaviour
         this.stat = stat;
         per = 3;
         this.isKnockBack = isKnockBack; 
-        rigid.linearVelocity = dir * 15f;
+        rigid.linearVelocity = dir * stat.ProjectileSpeed;
     }
 
     void OnTriggerEnter2D(Collider2D collision)

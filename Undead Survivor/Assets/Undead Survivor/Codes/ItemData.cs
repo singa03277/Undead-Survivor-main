@@ -28,7 +28,7 @@ public class ItemData : ScriptableObject
 
     [Header("# Level Data")]  
     public float[] damages; 
-    public int[] subStat;    
+    public float[] subStat;    
     public SubStatType[] LevelUpStatTypes;
 
     [Header("# Weapon")]

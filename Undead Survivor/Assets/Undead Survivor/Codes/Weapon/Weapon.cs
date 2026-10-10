@@ -12,12 +12,12 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
     public int prefabId;
     public int id;
     public bool isKnockBack = false;
+
     private bool isRandom = false;
     private Vector3 lastDir;
     private float SequenceCount;
     private bool isEvolved = false;
     private bool isMaxLevel = false;
-
     Player player;
     public WeaponStat stat = new WeaponStat();
     ItemData data;
@@ -32,16 +32,8 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
         if (!GameManager.Instance.isLive)
             return;
 
-        
-        switch (data.itemId)
-        {
-            case 0:
-                transform.Rotate(Vector3.back * stat.AttackSpeed * Time.deltaTime);
-                break;
-            default:
-                break;
-
-        }
+        if(data.itemId == 0)
+            transform.Rotate(Vector3.back * stat.AttackSpeed * Time.deltaTime);
 
     }
 
@@ -51,7 +43,7 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
         name = "Weapon " + data.itemId; //ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½
         transform.parent = player.transform; //ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         transform.localPosition = Vector3.zero;
-
+        
 
         id = data.itemId;
         stat.init(data);
@@ -211,9 +203,8 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
 
     void SpawnFront()
     {
-        Transform front;
 
-        front = GameManager.Instance.pool.Get(prefabId).transform;
+        Transform front = GameManager.Instance.pool.Get(prefabId).transform;
         front.parent = transform;
         front.localPosition = Vector3.zero;
         front.localRotation = Quaternion.identity;
@@ -247,7 +238,6 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
         {
             Transform BackDotObject = GameManager.Instance.pool.Get(12).transform;
             Vector3 dir = player.scanner.randomTarget;
-            Debug.Log(dir);
             BackDotObject.position = transform.position;
             BackDotObject.rotation = Quaternion.identity;
             BackDotObject.GetComponent<EvolvedBackDot>().init(stat, CalcuDistance(player.scanner.randomTarget), data.isKnockback);
@@ -278,29 +268,41 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
         while (true)
         {
             Transform bullet;
-            Vector3 dir;
-            if (prefabId == 5)
-                dir = player.scanner.randomTarget;
-            else
-                dir = player.scanner.nearestTarget.position;
             for (int i = 0; i < stat.ProjectileNum; i++) 
             {
+                Vector3 dir;
+                if (prefabId == 5)
+                {
+                    dir = player.scanner.randomTarget;
+                    lastDir = dir;
+                }
+                    
+                else
+                {
+                    if (player.scanner.nearestTarget != null)
+                    {
+                        dir = player.scanner.nearestTarget.position;
+                        lastDir = dir;
+                    }
+                    else
+                        dir = lastDir;
+                }
                 bullet = GameManager.Instance.pool.Get(prefabId).transform;
                 bullet.position = transform.position;
                 bullet.rotation = Quaternion.identity;
-                switch (prefabId)
+                switch (data.itemId)
                 {
                     case 1:
                         bullet.GetComponent<Bullet>().init(stat, dir, data.isKnockback);
                         break;
                     case 2:
-                        bullet.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback, isEvolved);
+                        bullet.GetComponent<Projectile>().init(stat, stat.ProjectileSpeed, dir, data.isKnockback, isEvolved);
                         break;
-                    case 4:
-                        bullet.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback, isEvolved);
+                    case 4: 
+                        bullet.GetComponent<Bullet>().init(stat, dir, data.isKnockback);
                         break;
                     case 5:
-                        bullet.GetComponent<Projectile>().init(stat, Random.Range(8f, 11f), dir, data.isKnockback, isEvolved);
+                        bullet.GetComponent<Projectile>().init(stat, stat.ProjectileSpeed, dir, data.isKnockback, isEvolved);
                         break;
                     case 6:
                         bullet.GetComponent<Boundingweapon>().init(stat, dir, data.isKnockback, isEvolved);
@@ -334,6 +336,8 @@ public class Weapon : MonoBehaviour //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï
     {
         data = data.evolveData;
         stat.init(data);
+        if (id == 0)
+            Batch();
         if (id == 8)
             SpawnFront();
         if (id == 9)
