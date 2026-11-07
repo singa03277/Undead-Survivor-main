@@ -31,10 +31,16 @@ MonoBehaviour:
   damages:
   - 0.15
   - 0.15
+  - 0.2
+  - 0.2
+  - 0.3
   subStat:
-  - 0.2
-  - 0.2
-  LevelUpStatTypes: 0000000000000000
+  - -0.1
+  - -0.1
+  - -0.1
+  - -0.1
+  - -0.1
+  LevelUpStatTypes: 0000000000000000000000000000000000000000
   projectile: {fileID: 8462740780204974709, guid: 49740571242932045a759322a179a122, type: 3}
   hand: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 16

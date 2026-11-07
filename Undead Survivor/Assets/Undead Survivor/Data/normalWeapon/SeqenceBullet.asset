@@ -28,12 +28,18 @@ MonoBehaviour:
   itemDesc: "\uC8FC\uAE30\uC801\uC73C\uB85C \uC5F0\uC18D \uBC1C\uC0AC\uCCB4"
   itemIcon: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   damages:
-  - 0.1
-  - 0.1
+  - 0.15
+  - 0.15
+  - 0.2
+  - 0.2
+  - 0.3
   subStat:
-  - 0
-  - 0
-  LevelUpStatTypes: 0000000000000000
+  - 1
+  - -0.1
+  - 0.2
+  - 1
+  - -0.1
+  LevelUpStatTypes: 0300000000000000040000000300000000000000
   projectile: {fileID: 8462740780204974709, guid: caa95efd50ca9ef46b40f313ed55eebf, type: 3}
   hand: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 12

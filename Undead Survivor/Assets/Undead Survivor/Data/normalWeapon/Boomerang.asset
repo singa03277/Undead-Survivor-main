@@ -17,7 +17,7 @@ MonoBehaviour:
     AttackSpeed: 0.5
     AreaRadius: 0
     Duration: 0
-    ProjectileNum: 0
+    ProjectileNum: 1
     ProjectileSpeed: 2
   itemType: 1
   gearType: 9
@@ -30,12 +30,18 @@ MonoBehaviour:
     \uB418\uB3CC\uC544\uAC04\uB2E4."
   itemIcon: {fileID: -38345435, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   damages:
+  - 0.15
+  - 0.15
   - 0.2
-  - 0.2
-  subStat:
   - 0.2
   - 0.3
-  LevelUpStatTypes: 0400000004000000
+  subStat:
+  - 0.2
+  - -0.1
+  - 1
+  - 0.2
+  - 1
+  LevelUpStatTypes: 0400000000000000030000000400000003000000
   projectile: {fileID: 8462740780204974709, guid: 7e704b5f44f76bb4eb8b5c6d1cedebf1, type: 3}
   hand: {fileID: 154122315, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 19
