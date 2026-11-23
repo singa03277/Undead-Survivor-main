@@ -19,7 +19,8 @@ public class Weapon : MonoBehaviour //���� ������ ���
     private bool isEvolved = false;
     private bool isMaxLevel = false;
     Player player;
-    public WeaponStat stat = new WeaponStat();
+    public WeaponStat stat = new WeaponStat();      // 패시브와 상한까지 적용된 최종 스탯 (투사체들이 이 참조를 사용)
+    WeaponStat baseStat = new WeaponStat();         // 무기 데이터 + 레벨업만 반영한 스탯 (패시브 미적용)
     ItemData data;
     
     void Awake()
@@ -46,7 +47,6 @@ public class Weapon : MonoBehaviour //���� ������ ���
         
 
         id = data.itemId;
-        stat.init(data);
 
         for (int i = 0; i < GameManager.Instance.pool.prefabs.Length; i++)
         {
@@ -57,6 +57,9 @@ public class Weapon : MonoBehaviour //���� ������ ���
                 break;
             }
         }
+
+        baseStat.init(data);
+        RefreshStat(); // 이미 가지고 있는 패시브를 새 무기에 적용
 
         switch (data.itemId)
         {
@@ -82,25 +85,29 @@ public class Weapon : MonoBehaviour //���� ������ ���
         Hand hand = player.hands[(int)data.itemType]; //������ Ÿ�Կ� �´� �ڵ带 �������� hand�� ����
         hand.spriter.sprite = data.hand; //�߰��س��� hand sprite�� ����
         hand.gameObject.SetActive(true);
+    }
 
-        //Weapon�� ���Ӱ� �߰��Ǹ� ApplyGear�� ���Ӱ� �߰��� ���⿡ Gear ������ ����
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver); //�÷��̾�� broadcast���ֵ��� ��Ź
+    // 기본 스탯(데이터 + 레벨업)에 보유한 패시브를 한 번씩만 적용하고 상한을 건다.
+    // 매번 기본값에서 다시 계산하므로 패시브 효과가 중복으로 누적되지 않는다.
+    public void RefreshStat()
+    {
+        stat.CopyFrom(baseStat);
 
+        foreach (Gear gear in player.GetComponentsInChildren<Gear>())
+            gear.ApplyTo(this);
+
+        bool isProjectile = id == 2 || id == 5; // Projectile.cs를 쓰는 투사체 장판(2), 투사체 폭탄(5)
+        stat.ClampLimits(id == 0, isProjectile ? WeaponStat.MinProjectileInterval : WeaponStat.MinAttackInterval);
+
+        if (id == 0 && transform.childCount > 0) // 회전 무기는 개수가 바뀌었을 수 있으니 재배치 (최초 배치는 Init에서)
+            Batch();
     }
 
     void FireRange(string name) // ���Ÿ� �߻翡 ���� �Լ�
     {
         Vector3 dir;
-        if (data.isRandomPlace)
-        {
-            dir = player.scanner.randomTarget == null ? lastDir : CalcuDistance(player.scanner.randomTarget);
-        }
-        else
-        {
-            dir = player.scanner.nearestTarget == null ? lastDir : player.scanner.randomTarget.normalized;
-
-        }
-        lastDir = dir;
+        if (!TryGetFireDir(out dir))
+            return;
 
         Transform Range = GameManager.Instance.pool.Get(prefabId).transform;
         Range.position = transform.position;
@@ -117,45 +124,65 @@ public class Weapon : MonoBehaviour //���� ������ ���
 
     }
 
-    Vector3 CalcuDistance(Vector3 dest)
+    // 발사 방향(단위 벡터)을 구한다.
+    // isRandomPlace 무기는 스캐너의 랜덤 방향을, 그 외에는 가장 가까운 적을 향한 방향을 쓴다.
+    // 적이 없으면 마지막 방향을 쓰고, 마지막 방향도 없으면(게임 시작 직후) 발사하지 않는다.
+    bool TryGetFireDir(out Vector3 dir)
     {
-        if (dest == null)
-            return Vector3.zero;
+        if (data.isRandomPlace)
+        {
+            dir = player.scanner.randomTarget.normalized; // randomTarget은 위치가 아니라 방향 벡터
+        }
+        else if (player.scanner.nearestTarget != null)
+        {
+            dir = CalcuDistance(player.scanner.nearestTarget.position);
+        }
+        else
+        {
+            dir = lastDir;
+        }
 
+        if (dir == Vector3.zero)
+            return false;
+
+        lastDir = dir;
+        return true;
+    }
+
+    Vector3 CalcuDistance(Vector3 dest) // 목표 위치를 향한 방향(단위 벡터)
+    {
         Vector3 dir = dest - transform.position;
+        dir.z = 0;
         return dir.normalized;
     }
 
     public void LevelUp(float damage, int level) //���Ÿ� �߻�ü�� �ƴѰ��� �߰����� �Լ� ���� �ʿ�(spawn --- �Լ��� �����ʿ�)
     {
-        stat.Damage = damage * Character.Damage;
+        baseStat.Damage = damage * Character.Damage;
 
         switch (data.LevelUpStatTypes[level])
         {
             case ItemData.SubStatType.AttackSpeed:
-                stat.AttackSpeed += (stat.AttackSpeed * data.subStat[level]);
+                baseStat.AttackSpeed += (baseStat.AttackSpeed * data.subStat[level]);
                 break;
             case ItemData.SubStatType.AreaRadius:
-                stat.AreaRadius += (stat.AreaRadius * data.subStat[level]);
+                baseStat.AreaRadius += (baseStat.AreaRadius * data.subStat[level]);
                 break;
             case ItemData.SubStatType.AreaDuration:
-                stat.Duration += (stat.Duration * data.subStat[level]);
+                baseStat.Duration += (baseStat.Duration * data.subStat[level]);
                 break;
             case ItemData.SubStatType.ProjectileNum:
-                stat.ProjectileNum += data.subStat[level];
+                baseStat.ProjectileNum += data.subStat[level];
                 break;
             case ItemData.SubStatType.ProjectileSpeed:
-                stat.ProjectileSpeed += (stat.ProjectileSpeed * data.subStat[level]);
+                baseStat.ProjectileSpeed += (baseStat.ProjectileSpeed * data.subStat[level]);
                 break;
         }
-
-        if (id == 0)
-            Batch();
 
         if(isMaxLevel == false && level+1 == data.damages.Length)
             isMaxLevel = true;
 
-        player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
+        RefreshStat();
     }
 
     
@@ -237,10 +264,10 @@ public class Weapon : MonoBehaviour //���� ������ ���
         while (true)
         {
             Transform BackDotObject = GameManager.Instance.pool.Get(12).transform;
-            Vector3 dir = player.scanner.randomTarget;
+            Vector3 dir = player.scanner.randomTarget.normalized; // randomTarget은 이미 방향 벡터
             BackDotObject.position = transform.position;
             BackDotObject.rotation = Quaternion.identity;
-            BackDotObject.GetComponent<EvolvedBackDot>().init(stat, CalcuDistance(player.scanner.randomTarget), data.isKnockback);
+            BackDotObject.GetComponent<EvolvedBackDot>().init(stat, dir, data.isKnockback);
             yield return new WaitForSeconds(stat.AttackSpeed);
         }
     }
@@ -271,25 +298,16 @@ public class Weapon : MonoBehaviour //���� ������ ���
             for (int i = 0; i < stat.ProjectileNum; i++) 
             {
                 Vector3 dir;
-                if (prefabId == 5)
+                if (!TryGetFireDir(out dir))
                 {
-                    dir = player.scanner.randomTarget;
-                    lastDir = dir;
+                    yield return null; // 쏠 방향이 없으면 다음 프레임에 다시 확인
+                    continue;
                 }
-                    
-                else
-                {
-                    if (player.scanner.nearestTarget != null)
-                    {
-                        dir = player.scanner.nearestTarget.position;
-                        lastDir = dir;
-                    }
-                    else
-                        dir = lastDir;
-                }
+
                 bullet = GameManager.Instance.pool.Get(prefabId).transform;
                 bullet.position = transform.position;
-                bullet.rotation = Quaternion.identity;
+                // 총알류(1, 4)는 날아가는 방향으로 회전, 나머지는 회전하지 않음
+                bullet.rotation = (data.itemId == 1 || data.itemId == 4) ? Quaternion.FromToRotation(Vector3.up, dir) : Quaternion.identity;
                 switch (data.itemId)
                 {
                     case 1:
@@ -328,6 +346,13 @@ public class Weapon : MonoBehaviour //���� ������ ���
         if (!GameManager.Instance.passiveInventory.Contains(data.evolvePassiveId))
             return;
 
+        // evolveData가 비어 있거나 자기 자신을 가리키면 진화 시 스탯이 Lv1로 초기화되므로 진화하지 않는다.
+        if (data.evolveData == null || data.evolveData == data)
+        {
+            Debug.LogWarning($"[{data.itemName}] evolveData가 설정되지 않아 진화를 건너뜁니다.");
+            return;
+        }
+
         isEvolved = true;
         ApplyEvolve();
     }
@@ -335,9 +360,12 @@ public class Weapon : MonoBehaviour //���� ������ ���
     void ApplyEvolve()
     {
         data = data.evolveData;
-        stat.init(data);
-        if (id == 0)
-            Batch();
+        baseStat.init(data); // 진화 데이터의 스탯은 기본값(절대값)으로 적용되고, 패시브와 상한은 RefreshStat에서 다시 적용된다.
+        RefreshStat();
+        if (id == 3)
+            GetComponentInChildren<SlowArea>(true)?.init(stat, true);   // 이미 생성된 영역에 진화 상태 전달
+        if (id == 7)
+            GetComponentInChildren<Laser>(true)?.init(stat, data.isKnockback, true); // 이미 생성된 레이저에 진화 상태 전달
         if (id == 8)
             SpawnFront();
         if (id == 9)

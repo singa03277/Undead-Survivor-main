@@ -42,6 +42,7 @@ public class EvolvedBackDot : MonoBehaviour
         while (true)
         {
             Dot backDot = Instantiate(backDotObject, transform.position, Quaternion.identity);
+            backDot.destroyOnEnd = true;
             backDot.init(stat, isKnockBack, false);
             yield return new WaitForSeconds(spawnFreq);
         }

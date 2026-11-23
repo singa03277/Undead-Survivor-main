@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: EvolvedRotation
   m_EditorClassIdentifier: 
   stat:
-    Damage: 5
-    AttackSpeed: 120
+    Damage: 12
+    AttackSpeed: 150
     AreaRadius: 1
     Duration: 1
-    ProjectileNum: 10
+    ProjectileNum: 5
     ProjectileSpeed: 1
   itemType: 0
   gearType: 0
   itemId: 0
-  itemName: 
+  itemName: "\uC0BD (\uC9C4\uD654)"
   isRandomPlace: 0
-  isKnockback: 0
-  itemDesc: 
-  itemIcon: {fileID: 0}
+  isKnockback: 1
+  itemDesc: "\uC8FC\uBCC0 \uD68C\uC804 "
+  itemIcon: {fileID: -181907988, guid: d71a3dc7aa20fad4f9a99fc76a9254ba, type: 3}
   damages: []
   subStat: []
   LevelUpStatTypes: 
-  projectile: {fileID: 0}
-  hand: {fileID: 0}
+  projectile: {fileID: 8334697221927480317, guid: 0d59f41b6888c9c4ab210a739b24f6db, type: 3}
+  hand: {fileID: 143021600, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 0
   evolveData: {fileID: 0}

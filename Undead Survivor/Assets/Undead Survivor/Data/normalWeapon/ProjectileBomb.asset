@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stat:
     Damage: 30
-    AttackSpeed: 1
+    AttackSpeed: 1.7
     AreaRadius: 1.5
     Duration: 0
     ProjectileNum: 1
-    ProjectileSpeed: 5
+    ProjectileSpeed: 4
   itemType: 1
   gearType: 0
   itemId: 5
@@ -44,4 +44,4 @@ MonoBehaviour:
   projectile: {fileID: 8462740780204974709, guid: 23b5ebf7be4ad154a8ab806d405f8a86, type: 3}
   hand: {fileID: 154122315, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 20
-  evolveData: {fileID: 11400000}
+  evolveData: {fileID: 11400000, guid: b085f70320be48739fec97fa29317dff, type: 2}

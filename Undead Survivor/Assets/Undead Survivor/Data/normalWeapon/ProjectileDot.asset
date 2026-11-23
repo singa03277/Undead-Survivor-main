@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stat:
     Damage: 2
-    AttackSpeed: 0.5
+    AttackSpeed: 1.7
     AreaRadius: 2
-    Duration: 1
+    Duration: 1.5
     ProjectileNum: 1
-    ProjectileSpeed: 5
+    ProjectileSpeed: 4
   itemType: 1
   gearType: 0
   itemId: 2
@@ -35,13 +35,13 @@ MonoBehaviour:
   - 0.4
   - 0.4
   subStat:
-  - 0.2
+  - 0.1
   - -0.1
   - 1
-  - 0.25
+  - 0.1
   - 1
   LevelUpStatTypes: 0200000000000000030000000200000003000000
   projectile: {fileID: 8462740780204974709, guid: d74820e0a107f7149ad5d6760902f08c, type: 3}
   hand: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 17
-  evolveData: {fileID: 11400000}
+  evolveData: {fileID: 11400000, guid: 904d8a77c7ca4866a3a71a77dc8740fa, type: 2}

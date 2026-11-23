@@ -6,6 +6,7 @@ public class Gear : MonoBehaviour
 {
     public ItemData.GearType GearType;
     public float rate;
+    float baseMaxHealth; // HealthUp 적용 전 최대 체력 (중복 누적 방지용)
 
 
     public void Init(ItemData data)
@@ -17,7 +18,8 @@ public class Gear : MonoBehaviour
 
         //Property Set
         GearType = data.gearType;
-        rate = data.damages[0]; //Gear의 주요 rate는 damages에 저장 중
+        rate = data.damages[0]; //Gear의 주요 rate는 damages에 저장 중 (레벨별 누적 상승률)
+        baseMaxHealth = GameManager.Instance.maxHealth;
 
         ApplyGear(); //기어가 처음 생성될 때 로직 적용 함수를 호출
     }
@@ -28,13 +30,12 @@ public class Gear : MonoBehaviour
         ApplyGear();    //레벨업 할 때 로직 적용 함수를 호출
     }
 
-    void ApplyGear() //타입에 따라 적절하게 로직을 적용 시켜주는 함수 추가
+    // rate는 해당 레벨의 누적 상승률이므로, 항상 기본값에 한 번만 적용한다.
+    // (기존에는 현재 값에 rate를 계속 더해서 무기 획득·레벨업마다 효과가 중복으로 쌓였다.)
+    void ApplyGear() //타입에 따라 적절하게 로직을 적용 시켜주는 함수
     {
         switch(GearType)
         {
-            case ItemData.GearType.AsGlove:
-                RateUp();
-                break;
             case ItemData.GearType.SpeedBoots:
                 SpeedUp();
                 break;
@@ -44,46 +45,41 @@ public class Gear : MonoBehaviour
             case ItemData.GearType.Defense:
                 DefenseUp();
                 break;
-            case ItemData.GearType.AttackUp:
-                AttackUp();
-                break;
-            case ItemData.GearType.AreaRadius:
-                AreaRadiusUp();
-                break;
-            case ItemData.GearType.AreaTime:
-                AreaTimeUp();
-                break;
-            case ItemData.GearType.ProjectileCount:
-                ProjectileCountUp();
-                break;
-            case ItemData.GearType.ProjectileSpeedUp:
-                ProjectileSpeedUp();
+            default: // 나머지는 무기 스탯 패시브 -> 무기마다 스탯을 다시 계산하게 한다
+                foreach (Weapon weapon in transform.parent.GetComponentsInChildren<Weapon>())
+                    weapon.RefreshStat();
                 break;
         }
     }
 
-    void WeaponStatUp()
+    // Weapon.RefreshStat에서 호출: 기본 스탯이 복사된 weapon.stat에 이 패시브의 효과를 적용한다.
+    public void ApplyTo(Weapon weapon)
     {
-
-    }
-
-    void RateUp() //장갑의 기능인 연사력을 올리는 함수
-    {
-        // 부모로 올라가서 자식들의 Weapon 컴포넌트들을 다 가져온다.
-        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-        //무기 하나씩 순회하면서 타입에 따라 speed 값 변경
-        foreach(Weapon weapon in weapons)
+        WeaponStat stat = weapon.stat;
+        switch (GearType)
         {
-            switch (weapon.id)
-            {
-                case 0: //근거리 무기의 경우
-                    float speed = 150 * Character.WeaponSpeed;
-                    weapon.stat.AttackSpeed = speed + (speed * rate); // 회전 속도를 증가
-                    break;
-                default: //원거리 무기의 경우
-                    weapon.stat.AttackSpeed = weapon.stat.AttackSpeed * (1f - rate);  // 무조건 공격속도 테이블에서는 소수점으로 줘야함 - 그러지 않으면 -로 넘어가게 됨. 
-                    break;
-            }
+            case ItemData.GearType.AsGlove:
+                if (weapon.id == 0) // 회전 무기: 회전 속도 증가
+                    stat.AttackSpeed = stat.AttackSpeed * Character.WeaponSpeed * (1f + rate);
+                else                // 원거리 무기: 공격 간격 감소 (rate는 1보다 작아야 함)
+                    stat.AttackSpeed = stat.AttackSpeed * (1f - rate);
+                break;
+            case ItemData.GearType.AttackUp:
+                stat.Damage *= (1f + rate);
+                break;
+            case ItemData.GearType.AreaRadius:
+                stat.AreaRadius *= (1f + rate);
+                break;
+            case ItemData.GearType.AreaTime:
+                stat.Duration *= (1f + rate);
+                break;
+            case ItemData.GearType.ProjectileCount:
+                if (stat.ProjectileNum > 0) // 투사체가 있는 무기만 개수 증가 (기존에는 범위가 늘어나던 버그)
+                    stat.ProjectileNum += rate;
+                break;
+            case ItemData.GearType.ProjectileSpeedUp:
+                stat.ProjectileSpeed *= (1f + rate);
+                break;
         }
     }
 
@@ -95,56 +91,11 @@ public class Gear : MonoBehaviour
 
     void HealthUp()
     {
-        GameManager.Instance.maxHealth += (GameManager.Instance.maxHealth * rate);
+        GameManager.Instance.maxHealth = baseMaxHealth * (1f + rate);
     }
 
     void DefenseUp()
     {
-        GameManager.Instance.defense += rate;
-    }
-
-    void AttackUp()
-    {
-        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-        foreach (Weapon weapon in weapons)
-        {
-            weapon.stat.Damage += (weapon.stat.Damage * rate);
-        }
-    }
-
-    void AreaRadiusUp()
-    {
-        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-        foreach (Weapon weapon in weapons)
-        {
-            weapon.stat.AreaRadius += (weapon.stat.AreaRadius * rate);
-        }
-    }
-
-    void AreaTimeUp()
-    {
-        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-        foreach (Weapon weapon in weapons)
-        {
-            weapon.stat.Duration += (weapon.stat.Duration* rate);
-        }
-    }
-
-    void ProjectileCountUp()
-    {
-        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-        foreach (Weapon weapon in weapons)
-        {
-            weapon.stat.AreaRadius += (weapon.stat.ProjectileNum * rate);
-        }
-    }
-
-    void ProjectileSpeedUp()
-    {
-        Weapon[] weapons = transform.parent.GetComponentsInChildren<Weapon>();
-        foreach (Weapon weapon in weapons)
-        {
-            weapon.stat.ProjectileSpeed += (weapon.stat.ProjectileSpeed * rate);
-        }
+        GameManager.Instance.defense = Character.Defense + rate;
     }
 }

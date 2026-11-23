@@ -37,6 +37,16 @@ public class Laser : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        // 레벨업/진화로 바뀐 유지 시간·대기 시간이 반영되도록 매번 stat에서 읽는다.
+        WeaponTime = stat.Duration;
+        WaitTime = stat.AttackSpeed;
+
+        if (isEvolved && !Sprite.enabled) // 진화하면 항상 켜져 있음
+        {
+            Sprite.enabled = true;
+            Colli.enabled = true;
+        }
+
         if (!isEvolved)
         {
             if (isWeaponTime)

@@ -16,7 +16,7 @@ MonoBehaviour:
     Damage: 75
     AttackSpeed: 2
     AreaRadius: 2
-    Duration: 2
+    Duration: 1
     ProjectileNum: 0
     ProjectileSpeed: 0
   itemType: 1
@@ -44,4 +44,4 @@ MonoBehaviour:
   projectile: {fileID: 8462740780204974709, guid: 6d264adc6297158449b34ca40baf8fde, type: 3}
   hand: {fileID: 154122315, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 14
-  evolveData: {fileID: 11400000}
+  evolveData: {fileID: 11400000, guid: bdcf78506f2c468387753ee7dd2143ff, type: 2}

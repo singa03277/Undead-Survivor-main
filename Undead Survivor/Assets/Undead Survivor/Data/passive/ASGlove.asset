@@ -31,9 +31,9 @@ MonoBehaviour:
   damages:
   - 0.1
   - 0.2
-  - 0.35
+  - 0.3
+  - 0.4
   - 0.5
-  - 0.75
   subStat: 
   LevelUpStatTypes: 
   projectile: {fileID: 0}
