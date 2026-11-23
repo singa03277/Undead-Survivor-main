@@ -16,7 +16,7 @@ MonoBehaviour:
     Damage: 75
     AttackSpeed: 2
     AreaRadius: 2
-    Duration: 2
+    Duration: 1
     ProjectileNum: 0
     ProjectileSpeed: 0
   itemType: 1
@@ -29,13 +29,19 @@ MonoBehaviour:
     \uC0DD\uC131\uB41C\uB2E4.\n\uC77C\uC815 \uC2DC\uAC04\uB9C8\uB2E4 \uC0AC\uB77C\uC9C4\uB2E4"
   itemIcon: {fileID: 762804792, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   damages:
+  - 0.2
+  - 0.2
   - 0.25
   - 0.25
+  - 0.3
   subStat:
-  - 0.1
-  - 0.1
-  LevelUpStatTypes: 0000000000000000
+  - 0.15
+  - -0.1
+  - 0.15
+  - -0.1
+  - 0.15
+  LevelUpStatTypes: 0200000000000000020000000000000002000000
   projectile: {fileID: 8462740780204974709, guid: 6d264adc6297158449b34ca40baf8fde, type: 3}
   hand: {fileID: 154122315, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   evolvePassiveId: 14
-  evolveData: {fileID: 11400000}
+  evolveData: {fileID: 11400000, guid: bdcf78506f2c468387753ee7dd2143ff, type: 2}

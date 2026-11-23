@@ -159,11 +159,14 @@ public class EnemyStatus : MonoBehaviour
 
     public IEnumerator evolveDotRoutine(Dot dot)
     {
+        // 진화 장판: 틱마다 데미지가 +1씩 오르되, 무한히 커지지 않도록 기본 데미지의 2배에서 멈춘다.
         float damage = dot.stat.Damage;
+        float maxDamage = dot.stat.Damage * 2f;
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            enemy.TakeDamage(damage++, "Dot", dot.isKnockBack);
+            enemy.TakeDamage(damage, "Dot", dot.isKnockBack);
+            damage = Mathf.Min(damage + 1f, maxDamage);
         }
     }
 

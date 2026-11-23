@@ -8,6 +8,7 @@ public class Boomerang : MonoBehaviour
     private Vector3 dir;
     private bool isKnockBack;
     private bool isEvolved;
+    [SerializeField] float launchAngle = 15f; // 발사할 때 정면에서 좌우로 틀어지는 최대 각도 (도)
     WeaponStat stat;
     Rigidbody2D rigid;
 
@@ -22,6 +23,11 @@ public class Boomerang : MonoBehaviour
         {
             Vector2 decrease = dir * accelerate * Time.deltaTime;
             rigid.linearVelocity -= decrease * 10;
+
+            // 되돌아오는 중(진행 방향이 발사 방향과 반대)에는 현재 투사체 속도를 넘지 않게 한다.
+            // (기존에는 감속이 계속 걸려 돌아올수록 끝없이 빨라졌다.)
+            if (Vector2.Dot(rigid.linearVelocity, dir) < 0 && rigid.linearVelocity.magnitude > stat.ProjectileSpeed)
+                rigid.linearVelocity = rigid.linearVelocity.normalized * stat.ProjectileSpeed;
         }
     }
 
@@ -29,9 +35,13 @@ public class Boomerang : MonoBehaviour
     {
         this.stat = stat;
         this.accelerate = 3f;
-        this.dir = dir;
+        // 완전 정면이 아니라 좌우로 살짝 틀어진 방향으로 발사한다.
+        this.dir = Quaternion.Euler(0, 0, Random.Range(-launchAngle, launchAngle)) * dir;
+        this.isKnockBack = isKnockBack; // 넉백 값이 저장되지 않아 항상 false였음
+        this.isEvolved = isEvolved;
         hit = false;
-        rigid.linearVelocity = dir * stat.ProjectileSpeed;
+        transform.localScale = Vector3.one; // 풀에서 재사용될 때 진화 크기가 남지 않도록 초기화
+        rigid.linearVelocity = this.dir * stat.ProjectileSpeed;
         if (isEvolved) 
         {
             StartCoroutine(increaseSizeRoutine());

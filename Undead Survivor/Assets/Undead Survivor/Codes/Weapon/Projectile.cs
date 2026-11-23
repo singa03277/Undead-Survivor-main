@@ -44,7 +44,10 @@ public class Projectile : MonoBehaviour
         if (isSub)
             Radius /= 2;
 
-        projectileRB.AddForce(target * power, ForceMode.Impulse);
+        // 풀에서 재사용될 때 이전 상태(중력 꺼짐, 남은 속도)가 남아 있어 포물선이 그려지지 않던 문제 초기화
+        projectileRB.useGravity = true;
+        projectileRB.linearVelocity = Vector3.zero;
+        projectileRB.AddForce(target.normalized * power, ForceMode.Impulse);
     }
     private void FixedUpdate()
     {
@@ -84,6 +87,7 @@ public class Projectile : MonoBehaviour
         if(isArrived && CompareTag("Dot"))
         {
             Dot dot = Instantiate(DotObject, transform.position, Quaternion.identity);
+            dot.destroyOnEnd = true; // Instantiate한 장판은 끝나면 삭제
             dot.init(stat, isKnockBack, isEvolved);
             gameObject.SetActive(false);
         }   

@@ -78,6 +78,10 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage,string type, bool isKnockBack)
     {
+        // 이미 죽은 적(콜라이더 꺼짐)이 도트 코루틴 등으로 다시 맞으면 킬/경험치가 중복으로 오르던 문제 방지
+        if (!coll.enabled)
+            return;
+
         health -= damage;
         if (health > 0)
         {

@@ -67,7 +67,8 @@ public class Item : MonoBehaviour
                     GameManager.Instance.weaponInventory.Add(data.itemId);
                     if(GameManager.Instance.weaponInventory.Count == 6)
                     {
-                        GameManager.Instance.weaponPool = GameManager.Instance.weaponInventory;
+                        // 같은 리스트를 공유하면 weaponPool.Remove가 인벤토리에서도 지워지므로 복사본을 쓴다.
+                        GameManager.Instance.weaponPool = new List<int>(GameManager.Instance.weaponInventory);
                     }
                         
                     weapon = newWeapon.AddComponent<Weapon>();
@@ -96,7 +97,8 @@ public class Item : MonoBehaviour
                     GameManager.Instance.passiveInventory.Add(data.itemId);
                     if (GameManager.Instance.passiveInventory.Count == 6)
                     {
-                        GameManager.Instance.passivePool = GameManager.Instance.passiveInventory;
+                        // 같은 리스트를 공유하면 passivePool.Remove가 passiveInventory에서도 지워져 진화 조건 검사가 실패한다.
+                        GameManager.Instance.passivePool = new List<int>(GameManager.Instance.passiveInventory);
                     }
                         
                     gear = newGear.AddComponent<Gear>();
@@ -117,7 +119,9 @@ public class Item : MonoBehaviour
                     weapon.CheckEvolve();
                 }
 
-                if (level-1 == data.damages.Length)
+                // 패시브는 damages[0]이 Lv1이라 레벨 수 = damages.Length.
+                // (기존 level-1 조건이면 Lv6을 고를 때 damages[5]를 읽어 IndexOutOfRange 오류 발생)
+                if (level == data.damages.Length)
                 {
                     GameManager.Instance.passivePool.Remove(data.itemId);
                 }
@@ -141,20 +145,25 @@ public class Item : MonoBehaviour
 
         switch (data.LevelUpStatTypes[level-1])
         {
+            // subStat은 비율(0.2 = 20%)로 저장되어 있으므로 100을 곱해서 표시한다.
             case ItemData.SubStatType.AttackSpeed:
-                itemText += $"\n공격속도 {data.subStat[level-1]}% 증가";
+                float rate = data.subStat[level - 1] * 100;
+                if (rate < 0) // 원거리 무기는 AttackSpeed가 공격 간격이므로 음수 = 더 빨라짐
+                    itemText += $"\n공격 간격 {-rate}% 감소";
+                else
+                    itemText += $"\n공격속도 {rate}% 증가";
                 break;
             case ItemData.SubStatType.AreaRadius:
-                itemText += $"\n범위공격 범위 {data.subStat[level-1]}% 증가";
+                itemText += $"\n범위공격 범위 {data.subStat[level - 1] * 100}% 증가";
                 break;
             case ItemData.SubStatType.ProjectileNum:
                 itemText += $"\n투사체 개수 {data.subStat[level - 1]}개 증가";
                 break;
             case ItemData.SubStatType.ProjectileSpeed:
-                itemText += $"\n투사체 속도 {data.subStat[level - 1]}% 증가";
+                itemText += $"\n투사체 속도 {data.subStat[level - 1] * 100}% 증가";
                 break;
             case ItemData.SubStatType.AreaDuration:
-                itemText += $"\n범위공격 유지 시간 {data.subStat[level - 1]}% 증가";
+                itemText += $"\n범위공격 유지 시간 {data.subStat[level - 1] * 100}% 증가";
                 break;
             case ItemData.SubStatType.none:
                 break;

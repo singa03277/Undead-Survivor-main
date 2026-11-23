@@ -21,6 +21,7 @@ public class FrontAttack : MonoBehaviour
         this.isRight = isRight;
         AttackTime = stat.AttackSpeed;
     }
+    Vector2 lastDir = Vector2.right; // 멈춰 있을 때 공격할 방향(마지막 이동 방향)
     private void Awake()
     {
         play = GameManager.Instance.player.GetComponent<Player>();
@@ -29,8 +30,14 @@ public class FrontAttack : MonoBehaviour
 
     private void FixedUpdate()
     {
-        PlayerDir = play.inputVec.normalized;
-        
+        // 입력이 없으면 방향이 (0,0)이 되어 항상 오른쪽만 공격하던 문제 → 마지막 이동 방향 유지
+        if (play.inputVec != Vector2.zero)
+            lastDir = play.inputVec.normalized;
+        PlayerDir = lastDir;
+
+        // 레벨업으로 줄어든 공격 간격이 반영되도록 매번 stat에서 읽는다.
+        AttackTime = stat.AttackSpeed;
+
         if (!IsAttack)
         {
             AttackTimer += Time.deltaTime;
